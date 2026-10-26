@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <link rel="stylesheet" type="text/css" th:href="@{/css/index.css}">
+  <link rel="stylesheet" type="text/css" th:href="@{/css/formularios.css}">
+  <link rel="stylesheet" type="text/css" th:href="@{/css/tablas.css}">
+  <meta charset="UTF-8">
+  <title>Listado de videojuegos</title>
+</head>
+<body>
+<div th:replace="~{fragmentos/menu :: menu}"></div>
+<h1>Listado de Videojuegos</h1>
+<div class="container">
+  <div class="form">
+    <form th:action="@{/videojuegos/listadoVideojuegos}" method="post">
+      <label for="nombre">Titulo</label>
+      <input type="text" id="nombre" name="nombre"><br>
+      <label for="idMunicipio">Municipio</label>
+      <select id="idMunicipio" name="idMunicipio">
+        <option value="">Todos</option>
+        <option th:each="municipio : ${desplegableMunicipios}"
+                th:value="${municipio.id}"
+                th:text="${municipio.descripcion}"></option>
+      </select>
+      <label for="familiaNumerosa">Familia numerosa</label>
+      <select id="familiaNumerosa" name="familiaNumerosa">
+        <option value="">Todos</option>
+        <option value="true">Sí</option>
+        <option value="false">No</option>
+      </select>
+      <label for="activo">Activo</label>
+      <select id="activo" name="activo">
+        <option value="">Todos</option>
+        <option value="true">Sí</option>
+        <option value="false">No</option>
+      </select><br>
+      <input type="submit" value="Buscar">
+    </form>
+  </div>
+</div>
+</body>
+</html>
