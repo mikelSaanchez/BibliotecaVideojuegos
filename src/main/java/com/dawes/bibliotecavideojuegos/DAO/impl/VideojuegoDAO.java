@@ -18,4 +18,8 @@ private final VideojuegoRepository videojuegoRepository;
     public ArrayList<VideojuegoDTO> filtarVideojuego(String titulo, Integer id_desarrolladora, Integer anio_lanzamiento, Integer pegi, Boolean activo) {
         return videojuegoRepository.filtarVideojuego(titulo, id_desarrolladora, anio_lanzamiento, pegi, activo);
     }
+    @Override
+    public int insertarVideojuego(VideojuegoDTO videojuego) {
+        return videojuegoRepository.insertar(videojuego);
+    }
 }

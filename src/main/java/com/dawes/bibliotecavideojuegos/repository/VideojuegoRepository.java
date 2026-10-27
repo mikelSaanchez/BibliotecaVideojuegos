@@ -66,6 +66,23 @@ public class VideojuegoRepository {
         }
         return listaVideojuego;
     }
+    public int insertar(VideojuegoDTO videojuego){
+        String sql = "INSERT INTO videojuegos (titulo, anio_lanzamiento,pegi, id_desarrolladora) VALUES (?, ?, ?, ?);";
+        Connection connection = null;
+        int filasAfectadas = 0;
+        try {
+            connection = dataSource.getConnection();
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(2, videojuego.getTitulo());
+            ps.setInt(3, videojuego.getAnio_lanzamiento());
+            ps.setInt(4, videojuego.getPegi());
+            ps.setInt(5, videojuego.getId_desarrolladora());
+        } catch (SQLException e) {
+            logger.error("Error al insertar el alumno {}", videojuego.getId(), e);
+            cerrarConexion(connection);
+        }
+        return filasAfectadas;
+    }
 
     private VideojuegoDTO mapearVideojuego(ResultSet rs) throws SQLException {
         return new VideojuegoDTO(

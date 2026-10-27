@@ -15,7 +15,7 @@
   <div class="form">
     <form th:action="@{/videojuegos/listadoVideojuegos}" method="post">
       <label for="nombre">Titulo</label>
-      <input type="text" id="nombre" name="nombre"><br>
+      <input type="text" id="nombre" name="nombre">
       <label for="id_desarrolladora">Desarrolladora</label>
       <select id="id_desarrolladora" name="id_desarrolladora">
         <option value="">Todas</option>
@@ -25,9 +25,9 @@
       </select>
 
       <label for="anio_lanzamiento">Año desde: </label>
-      <input type="text" id="anio_lanzamiento" name="anio_lanzamiento"><br>
+      <input type="text" id="anio_lanzamiento" name="anio_lanzamiento">
 
-      <label for="pegi">Pegi maximo</label>
+      <label for="pegi">PEGI maximo</label>
       <select id="pegi" name="pegi">
         <option value="">Cualquiera</option>
         <option value="3">3</option>
@@ -42,7 +42,7 @@
         <option value="">Todos</option>
         <option value="true">Sí</option>
         <option value="false">No</option>
-      </select><br>
+      </select>
 
       <input type="submit" value="Buscar">
     </form>
@@ -55,7 +55,7 @@
     <th>Titulo</th>
     <th>Desarrolladora</th>
     <th>Año</th>
-    <th>Pegi</th>
+    <th>PEGI</th>
     <th>Copias</th>
     <th>Disponibles</th>
   </tr>
