@@ -1,12 +1,11 @@
 package com.dawes.bibliotecavideojuegos.controlador;
 
+import com.dawes.bibliotecavideojuegos.DTO.VideojuegoDTO;
+import com.dawes.bibliotecavideojuegos.excepcion.ReglaNegocioExcepcion;
 import com.dawes.bibliotecavideojuegos.service.VideojuegoService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/videojuegos")
@@ -35,6 +34,26 @@ public class VideojuegoController {
         model.addAttribute("listaVideoJuegos", videojuegoService.filtrarVideojuego(titulo, id_desarrolladora, anio_lanzamiento, pegi, activo));
         model.addAttribute("desplegableDesarrolladora", videojuegoService.obtenerDesplegableDesarrolladoras());
         return "videojuegos/listado";
+    }
+    @GetMapping("/insertarVideojuego")
+    public String mostrarFormularioAlta(Model model) {
+        model.addAttribute("videojuego", new VideojuegoDTO());
+        model.addAttribute("desplegableDesarrolladora", videojuegoService.obtenerDesplegableDesarrolladoras());
+        return "videojuegos/insertar";
+    }
+
+    @PostMapping("/insertarVideojuego")
+    public String insertarVideoJuego(@ModelAttribute("videojuego") VideojuegoDTO videojuego,
+                                 Model model) {
+        try {
+            videojuegoService.insertarVideojuego(videojuego);
+            model.addAttribute("mensaje", "Videojuego " + videojuego.getTitulo() +  " insertado correctamente.");
+            model.addAttribute("videojuego", new VideojuegoDTO());
+        } catch (ReglaNegocioExcepcion e) {
+            model.addAttribute("error", e.getMessage());
+        }
+        model.addAttribute("desplegableDesarrolladoras", videojuegoService.obtenerDesplegableDesarrolladoras());
+        return "videojuegos/insertar";
     }
 
 }

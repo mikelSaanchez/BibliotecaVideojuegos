@@ -9,11 +9,13 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Set;
 
 @Service
 public class VideojuegoService {
     private final IVideojuegoDAO videojuegoDAO;
     private final IDesarrolladoraDAO desarrolladoraDAO;
+    private static final Set<Integer> edadesPEGI = Set.of(3, 7, 12, 16, 18);
 
     public VideojuegoService(IVideojuegoDAO videojuegoDAO, IDesarrolladoraDAO desarrolladoraDAO) {
         this.videojuegoDAO = videojuegoDAO;
@@ -28,7 +30,7 @@ public class VideojuegoService {
         return videojuegoDAO.filtarVideojuego(titulo, id_desarrolladora, anio_lanzamiento, pegi, activo);
     }
 
-    public void insertarVideojuego(VideojuegoDTO videojuego){
+    public void insertarVideojuego(VideojuegoDTO videojuego) {
 
         if (videojuego.getTitulo() == null || videojuego.getTitulo().isBlank()) {
             throw new ReglaNegocioExcepcion("El nombre del videojuego es obligatorio.");
@@ -40,8 +42,8 @@ public class VideojuegoService {
             throw new ReglaNegocioExcepcion("El anio de lanzamiento del videojuego tiene que estar entre los valores solicitados.");
         }
 
-        if (videojuego.getPegi() == 3) {
-            throw new ReglaNegocioExcepcion("El anio de lanzamiento del videojuego es obligatorio.");
+        if (!edadesPEGI.contains(videojuego.getPegi())) {
+            throw new ReglaNegocioExcepcion("El PEGI tiene que ser uno de los valores de las variables.");
         }
 
         int filasAfectadas = videojuegoDAO.insertarVideojuego(videojuego);
