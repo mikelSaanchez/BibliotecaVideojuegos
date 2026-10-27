@@ -2,14 +2,14 @@ package com.dawes.bibliotecavideojuegos.DTO;
 
 public class DesplegableDTO {
     private int id;
-    private String descripcion;
+    private String nombre;
 
     public DesplegableDTO() {
     }
 
-    public DesplegableDTO(int id, String descripcion) {
+    public DesplegableDTO(int id, String nombre) {
         this.id = id;
-        this.descripcion = descripcion;
+        this.nombre = nombre;
     }
 
     public int getId() {
@@ -20,11 +20,11 @@ public class DesplegableDTO {
         this.id = id;
     }
 
-    public String getDescripcion() {
-        return descripcion;
+    public String getNombre() {
+        return nombre;
     }
 
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
+    public void setNombre(String descripcion) {
+        this.nombre = nombre;
     }
 }

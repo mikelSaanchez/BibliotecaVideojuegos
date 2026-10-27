@@ -7,6 +7,7 @@
   <meta charset="UTF-8">
   <title>Listado de videojuegos</title>
 </head>
+
 <body>
 <div th:replace="~{fragmentos/menu :: menu}"></div>
 <h1>Listado de Videojuegos</h1>
@@ -15,28 +16,58 @@
     <form th:action="@{/videojuegos/listadoVideojuegos}" method="post">
       <label for="nombre">Titulo</label>
       <input type="text" id="nombre" name="nombre"><br>
-      <label for="idMunicipio">Municipio</label>
-      <select id="idMunicipio" name="idMunicipio">
-        <option value="">Todos</option>
-        <option th:each="municipio : ${desplegableMunicipios}"
-                th:value="${municipio.id}"
-                th:text="${municipio.descripcion}"></option>
+      <label for="id_desarrolladora">Desarrolladora</label>
+      <select id="id_desarrolladora" name="id_desarrolladora">
+        <option value="">Todas</option>
+        <option th:each="desarrolladora : ${desplegableDesarrolladora}"
+                th:value="${desarrolladora.id}"
+                th:text="${desarrolladora.nombre}" ></option>
       </select>
-      <label for="familiaNumerosa">Familia numerosa</label>
-      <select id="familiaNumerosa" name="familiaNumerosa">
-        <option value="">Todos</option>
-        <option value="true">Sí</option>
-        <option value="false">No</option>
+
+      <label for="anio_lanzamiento">Año desde: </label>
+      <input type="text" id="anio_lanzamiento" name="anio_lanzamiento"><br>
+
+      <label for="pegi">Pegi maximo</label>
+      <select id="pegi" name="pegi">
+        <option value="">Cualquiera</option>
+        <option value="3">3</option>
+        <option value="7">7</option>
+        <option value="3">12</option>
+        <option value="7">16</option>
+        <option value="3">18</option>
       </select>
-      <label for="activo">Activo</label>
+
+      <label for="activo">Solo con copias disponibles:</label>
       <select id="activo" name="activo">
         <option value="">Todos</option>
         <option value="true">Sí</option>
         <option value="false">No</option>
       </select><br>
+
       <input type="submit" value="Buscar">
     </form>
   </div>
 </div>
+<h2 th:if="${listaVideoJuegos == null or listaVideoJuegos.isEmpty()}">No hay videojuegos que cumplan esos criterios</h2>
+<table th:if="${listaVideoJuegos != null and !listaVideoJuegos.isEmpty()}">
+  <tr>
+    <th>ID</th>
+    <th>Titulo</th>
+    <th>Desarrolladora</th>
+    <th>Año</th>
+    <th>Pegi</th>
+    <th>Copias</th>
+    <th>Disponibles</th>
+  </tr>
+  <tr th:each="videojuego : ${listaVideoJuegos}">
+    <td th:text="${videojuego.id}"></td>
+    <td th:text="${videojuego.titulo}"></td>
+    <td th:text="${videojuego.desarrolladora}"></td>
+    <td th:text="${videojuego.anio_lanzamiento}"></td>
+    <td th:text="${videojuego.pegi}"></td>
+    <td th:text="${videojuego.copiasTotales}"></td>
+    <td th:text="${videojuego.copiasDisponibles}"></td>
+  </tr>
+</table>
 </body>
 </html>

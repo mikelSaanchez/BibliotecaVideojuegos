@@ -21,8 +21,8 @@ public class VideojuegoRepository {
         this.dataSource = dataSource;
     }
 
-    public ArrayList<VideojuegoDTO> filtarVideojuego(String titulo, Integer id_desarrolladora, Integer anio_lanzamiento, Integer pegi, Boolean activo) {
-        StringBuilder sql = new StringBuilder("SELECT id, titulo,desarrolladora, anio_lanzamiento,pegi, copias_totales,copias_disponibles FROM biblioteca.v_videojuegos_detalle WHERE 1=1;");
+    public ArrayList<VideojuegoDTO> filtarVideojuego(String titulo, Integer id_desarrolladora, Integer anio_lanzamiento, Integer pegi, Boolean copias_disponibles) {
+        StringBuilder sql = new StringBuilder("SELECT id, titulo,desarrolladora, anio_lanzamiento,pegi, copias_totales,copias_disponibles FROM biblioteca.v_videojuegos_detalle WHERE 1=1");
 
         ArrayList<Object> parametros = new ArrayList<>();
 
@@ -42,11 +42,10 @@ public class VideojuegoRepository {
             sql.append(" AND pegi <= ?");
             parametros.add(pegi);
         }
-        if (activo != null) {
-            sql.append(" AND activo = ?");
-            parametros.add(activo);
+        if (copias_disponibles != null) {
+            sql.append(" AND copias_disponibles = ?");
+            parametros.add(copias_disponibles);
         }
-        sql.append(" ORDER BY titulo");
         ArrayList<VideojuegoDTO> listaVideojuego = new ArrayList<>();
         Connection connection = null;
         try {
@@ -55,6 +54,7 @@ public class VideojuegoRepository {
             for (int i = 0; i < parametros.size(); i++) {
                 ps.setObject(i + 1, parametros.get(i));
             }
+
             ResultSet rs = ps.executeQuery();
             while (rs.next()){
                 listaVideojuego.add(mapearVideojuego(rs));

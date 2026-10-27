@@ -19,19 +19,21 @@ public class VideojuegoController {
 
     @GetMapping("/listadoVideojuegos")
     public String listadoVideojuegos(Model model) {
-        model.addAttribute("listaVideoJuegos",
-                videojuegoService.filtrarVideojuego(null,null,null,null,null));
+        model.addAttribute("listaVideoJuegos", videojuegoService.filtrarVideojuego(null, null, null, null, null));
+        model.addAttribute("desplegableDesarrolladora", videojuegoService.obtenerDesplegableDesarrolladoras());
         return "videojuegos/listado";
     }
+
     @PostMapping("/listadoVideojuegos")
     public String buscarVideojuegos(@RequestParam(required = false) String titulo,
-                                @RequestParam(required = false) Integer id_desarrolladora,
-                                @RequestParam(required = false) Integer anio_lanzamiento,
-                                @RequestParam(required = false) Integer pegi,
-                                @RequestParam(required = false) Boolean activo,
-                                Model model) {
-        model.addAttribute("listaVideoJuegos",
-                videojuegoService.filtrarVideojuego(titulo, id_desarrolladora, anio_lanzamiento, pegi, activo));
+                                    @RequestParam(required = false) Integer id_desarrolladora,
+                                    @RequestParam(required = false) Integer anio_lanzamiento,
+                                    @RequestParam(required = false) Integer pegi,
+                                    @RequestParam(required = false) Boolean activo,
+                                    Model model) {
+        System.out.println("el id es este: "+id_desarrolladora);
+        model.addAttribute("listaVideoJuegos", videojuegoService.filtrarVideojuego(titulo, id_desarrolladora, anio_lanzamiento, pegi, activo));
+        model.addAttribute("desplegableDesarrolladora", videojuegoService.obtenerDesplegableDesarrolladoras());
         return "videojuegos/listado";
     }
 
