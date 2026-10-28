@@ -30,7 +30,6 @@ public class VideojuegoController {
                                     @RequestParam(required = false) Integer pegi,
                                     @RequestParam(required = false) Boolean activo,
                                     Model model) {
-        System.out.println("el id es este: "+id_desarrolladora);
         model.addAttribute("listaVideoJuegos", videojuegoService.filtrarVideojuego(titulo, id_desarrolladora, anio_lanzamiento, pegi, activo));
         model.addAttribute("desplegableDesarrolladora", videojuegoService.obtenerDesplegableDesarrolladoras());
         return "videojuegos/listado";
@@ -46,9 +45,11 @@ public class VideojuegoController {
     public String insertarVideoJuego(@ModelAttribute("videojuego") VideojuegoDTO videojuego,
                                  Model model) {
         try {
+
             videojuegoService.insertarVideojuego(videojuego);
             model.addAttribute("mensaje", "Videojuego " + videojuego.getTitulo() +  " insertado correctamente.");
             model.addAttribute("videojuego", new VideojuegoDTO());
+
         } catch (ReglaNegocioExcepcion e) {
             model.addAttribute("error", e.getMessage());
         }

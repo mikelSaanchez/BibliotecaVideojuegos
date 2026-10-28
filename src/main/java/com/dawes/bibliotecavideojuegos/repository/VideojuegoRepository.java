@@ -73,12 +73,15 @@ public class VideojuegoRepository {
         try {
             connection = dataSource.getConnection();
             PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setString(2, videojuego.getTitulo());
-            ps.setInt(3, videojuego.getAnio_lanzamiento());
-            ps.setInt(4, videojuego.getPegi());
-            ps.setInt(5, videojuego.getId_desarrolladora());
+            ps.setString(1, videojuego.getTitulo());
+            ps.setInt(2, videojuego.getAnio_lanzamiento());
+            ps.setInt(3, videojuego.getPegi());
+            ps.setInt(4, videojuego.getId_desarrolladora());
+
+            filasAfectadas = ps.executeUpdate();
+
         } catch (SQLException e) {
-            logger.error("Error al insertar el alumno {}", videojuego.getId(), e);
+            logger.info("Error al insertar el alumno {}", videojuego.getId(), e);
             cerrarConexion(connection);
         }
         return filasAfectadas;

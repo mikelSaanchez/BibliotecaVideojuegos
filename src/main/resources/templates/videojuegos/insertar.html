@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+    <link rel="stylesheet" th:href="@{/css/formularios.css}">
+    <meta charset="UTF-8">
+    <title>Insertar Videojuego</title>
+</head>
+<body>
+<div th:replace="~{fragmentos/menu :: menu}"></div>
+<h1>Insertar Videojuegos</h1>
+
+<div class="container">
+    <div class="form">
+        <form th:action="@{/videojuegos/insertarVideojuego}"
+              th:object="${videojuego}" method="post" id="formulario">
+
+            <label for="titulo">Titulo</label>
+            <input type="text" id="titulo" th:field="*{titulo}">
+
+            <label for="anio_lanzamiento">Año desde: </label>
+            <input type="text" id="anio_lanzamiento"  th:field="*{anio_lanzamiento}">
+
+            <label for="pegi">PEGI maximo</label>
+            <select id="pegi" th:field="*{pegi}">
+                <option value="">Cualquiera</option>
+                <option value="3">3</option>
+                <option value="7">7</option>
+                <option value="3">12</option>
+                <option value="7">16</option>
+                <option value="3">18</option>
+            </select>
+
+            <label for="id_desarrolladora">Desarrolladora</label>
+            <select id="id_desarrolladora" th:field="*{id_desarrolladora}">
+                <option value="">Todas</option>
+                <option th:each="desarrolladora : ${desplegableDesarrolladora}"
+                        th:value="${desarrolladora.id}"
+                        th:text="${desarrolladora.nombre}" ></option>
+            </select>
+            <input type="submit" value="Insertar">
+        </form>
+    </div>
+</div>
+
+<div th:replace="~{fragmentos/mensajes :: mensajes}"></div>
+
+</body>
+</html>

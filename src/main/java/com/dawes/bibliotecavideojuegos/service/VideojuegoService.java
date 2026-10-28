@@ -38,7 +38,7 @@ public class VideojuegoService {
         if (videojuego.getAnio_lanzamiento() == null) {
             throw new ReglaNegocioExcepcion("El anio de lanzamiento del videojuego es obligatorio.");
         }
-        if (videojuego.getAnio_lanzamiento() > 1970 && videojuego.getAnio_lanzamiento() < LocalDate.now().getYear()) {
+        if (videojuego.getAnio_lanzamiento() < 1970 && videojuego.getAnio_lanzamiento() > LocalDate.now().getYear()) {
             throw new ReglaNegocioExcepcion("El anio de lanzamiento del videojuego tiene que estar entre los valores solicitados.");
         }
 
