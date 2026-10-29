@@ -22,7 +22,7 @@ public class SocioRepository {
     }
 
     public ArrayList<SocioDTO> filtarSocio(String nombre, String apellidos, String email, Integer activo) {
-        StringBuilder sql = new StringBuilder("SELECT s.id, s.nombre, s.apellidos, s.email, s.activo,s.fecha_alta,TIMESTAMPDIFF(YEAR, s.fecha_nacimiento, CURDATE()) AS edad, COUNT(p.id_socio) AS prestamosAbiertos" + "FROM socios s" + "JOIN prestamos p " + "ON s.id = p.id_socio" + "WHERE 1 = 1");
+        StringBuilder sql = new StringBuilder("SELECT s.id, s.nombre, s.apellidos, s.email, s.activo,s.fecha_alta,TIMESTAMPDIFF(YEAR, s.fecha_nacimiento, CURDATE()) AS edad, COUNT(p.id_socio) AS prestamosAbiertos FROM socios s JOIN prestamos p ON s.id = p.id_socio WHERE 1 = 1");
         ArrayList<Object> parametros = new ArrayList<>();
 
         if ((nombre != null && !nombre.isBlank()) && (apellidos != null && !apellidos.isBlank())) {
@@ -64,7 +64,14 @@ public class SocioRepository {
     }
 
     private SocioDTO mapearSocio(ResultSet rs) throws SQLException {
-        return new SocioDTO(rs.getInt("id"), rs.getString("nombre"), rs.getString("apellidos"), rs.getString("email"), rs.getInt("edad"), rs.getInt("alta"), rs.getInt("prestamosAbiertos"), rs.getDate("fecha_alta").toLocalDate());
+        return new SocioDTO(rs.getInt("id"),
+                rs.getString("nombre"),
+                rs.getString("apellidos"),
+                rs.getString("email"),
+                rs.getInt("edad"),
+                rs.getInt("activo"),
+                rs.getInt("prestamosAbiertos"),
+                rs.getDate("fecha_alta").toLocalDate());
     }
 
     private void cerrarConexion(Connection connection) {
