@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/index.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/formularios.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/tablas.css}">
+    <meta charset="UTF-8">
+    <title>Listado de socios</title>
+</head>
+<body>
+
+<div th:replace="~{fragmentos/menu :: menu}"></div>
+<h1>Listado de Socios</h1>
+<div class="container">
+    <div class="form">
+        <form th:action="@{/socios/listadoSocios}" method="post">
+            <label for="nombre">Nombre</label>
+            <input type="text" id="nombre" name="nombre">
+
+            <label for="apellido">Apellidos</label>
+            <input type="text" id="apellido" name="apellido">
+
+            <label for="correo">Email</label>
+            <input type="text" id="correo" name="correo">
+
+            <label for="activo">Activo:</label>
+            <select id="activo" name="activo">
+                <option value="">Todos</option>
+                <option value="true">Sí</option>
+                <option value="false">No</option>
+            </select>
+            <input type="submit" value="Buscar">
+        </form>
+    </div>
+</div>
+<h2 th:if="${listaSocios == null or listaSocios.isEmpty()}">No hay socios que cumplan esos criterios</h2>
+<table th:if="${listaSocios != null and !listaSocios.isEmpty()}">
+    <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Apellidos</th>
+        <th>Email</th>
+        <th>Edad</th>
+        <th>Activo</th>
+        <th>Prestamos abiertos</th>
+        <th>Alta</th>
+    </tr>
+    <tr th:each="socio : ${listaSocios}">
+        <td th:text="${socio.id}"></td>
+        <td th:text="${socio.nombre}"></td>
+        <td th:text="${socio.apellidos}"></td>
+        <td th:text="${socio.email}"></td>
+        <td th:text="${socio.edad}"></td>
+        <td th:text="${socio.alta}"></td>
+        <td th:text="${socio.prestamosAbiertos}"></td>
+        <td th:text="${socio.fecha_alta}"></td>
+    </tr>
+</table>
+</body>
+</html>

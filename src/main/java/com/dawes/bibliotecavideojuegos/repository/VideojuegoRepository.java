@@ -86,7 +86,6 @@ public class VideojuegoRepository {
         }
         return filasAfectadas;
     }
-
     private VideojuegoDTO mapearVideojuego(ResultSet rs) throws SQLException {
         return new VideojuegoDTO(
                 rs.getInt("id"),
