@@ -26,15 +26,15 @@
             <label for="activo">Activo:</label>
             <select id="activo" name="activo">
                 <option value="">Todos</option>
-                <option value="true">Sí</option>
-                <option value="false">No</option>
+                <option value="1">Sí</option>
+                <option value="0">No</option>
             </select>
             <input type="submit" value="Buscar">
         </form>
     </div>
 </div>
-<h2 th:if="${listaSocios == null or listaSocios.isEmpty()}">No hay socios que cumplan esos criterios</h2>
-<table th:if="${listaSocios != null and !listaSocios.isEmpty()}">
+<h2 th:if="${listadoSocios == null or listadoSocios.isEmpty()}">No hay socios que cumplan esos criterios</h2>
+<table th:if="${listadoSocios != null and !listadoSocios.isEmpty()}">
     <tr>
         <th>ID</th>
         <th>Nombre</th>
@@ -45,7 +45,7 @@
         <th>Prestamos abiertos</th>
         <th>Alta</th>
     </tr>
-    <tr th:each="socio : ${listaSocios}">
+    <tr th:each="socio : ${listadoSocios}">
         <td th:text="${socio.id}"></td>
         <td th:text="${socio.nombre}"></td>
         <td th:text="${socio.apellidos}"></td>

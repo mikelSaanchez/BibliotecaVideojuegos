@@ -25,7 +25,7 @@ public class SocioRepository {
         StringBuilder sql = new StringBuilder("SELECT s.id, s.nombre, s.apellidos, s.email, s.activo,s.fecha_alta,TIMESTAMPDIFF(YEAR, s.fecha_nacimiento, CURDATE()) AS edad, COUNT(p.id_socio) AS prestamosAbiertos FROM socios s JOIN prestamos p ON s.id = p.id_socio WHERE 1 = 1");
         ArrayList<Object> parametros = new ArrayList<>();
 
-        if ((nombre != null && !nombre.isBlank()) && (apellidos != null && !apellidos.isBlank())) {
+        if ((nombre != null && !nombre.isBlank()) || (apellidos != null && !apellidos.isBlank())) {
             sql.append(" AND nombre LIKE ? AND apellidos like ?");
             parametros.add("%" + nombre + "%");
             parametros.add("%" + apellidos + "%");
@@ -40,7 +40,6 @@ public class SocioRepository {
             parametros.add(activo);
         }
         sql.append(" group by p.id_socio;");
-
         ArrayList<SocioDTO> listaSocios = new ArrayList<>();
         Connection connection = null;
         try {

@@ -19,7 +19,7 @@ public class SocioController {
 
     @GetMapping("/listadoSocios")
     public String listadoSocios(Model model) {
-        model.addAttribute("listaSocios", socioService.filtarSocio(null, null, null, null));
+        model.addAttribute("listadoSocios", socioService.filtarSocio(null, null, null, null));
 
         return "socios/listado";
     }
@@ -30,6 +30,7 @@ public class SocioController {
                               @RequestParam(required = false) String correo,
                               @RequestParam(required = false) Integer activo,
                               Model model) {
+
         model.addAttribute("listadoSocios", socioService.filtarSocio(nombre, apellido, correo, activo));
         return "socios/listado";
 
