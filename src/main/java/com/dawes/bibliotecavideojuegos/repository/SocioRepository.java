@@ -22,7 +22,10 @@ public class SocioRepository {
     }
 
     public ArrayList<SocioDTO> filtarSocio(String nombre, String apellidos, String email, Integer activo) {
-        StringBuilder sql = new StringBuilder("SELECT s.id, s.nombre, s.apellidos, s.email, s.activo,s.fecha_alta,TIMESTAMPDIFF(YEAR, s.fecha_nacimiento, CURDATE()) AS edad, COUNT(p.id_socio) AS prestamosAbiertos FROM socios s JOIN prestamos p ON s.id = p.id_socio WHERE 1 = 1");
+        StringBuilder sql = new StringBuilder("select s.id,s.nombre,s.apellidos, s.email, s.activo,s.fecha_alta,s.activo,TIMESTAMPDIFF(YEAR, s.fecha_nacimiento, CURDATE()) AS edad,\n" +
+                "(select count(*) from prestamos p where p.id_socio = s.id AND p.fecha_devolucion IS NULL) as prestamosAbiertos \n " +
+                "from socios s WHERE 1 = 1");
+
         ArrayList<Object> parametros = new ArrayList<>();
 
         if ((nombre != null && !nombre.isBlank()) || (apellidos != null && !apellidos.isBlank())) {
@@ -39,7 +42,7 @@ public class SocioRepository {
             sql.append(" AND activo = ?");
             parametros.add(activo);
         }
-        sql.append(" group by p.id_socio;");
+
         ArrayList<SocioDTO> listaSocios = new ArrayList<>();
         Connection connection = null;
         try {
@@ -53,6 +56,7 @@ public class SocioRepository {
             while (rs.next()) {
                 listaSocios.add(mapearSocio(rs));
             }
+            //System.out.println(sql);
             connection.close();
         } catch (SQLException e) {
             logger.error("Error al filtrar videojuego", e);
@@ -60,6 +64,28 @@ public class SocioRepository {
         }
 
         return listaSocios;
+    }
+
+    public int insertar(SocioDTO socio) {
+        String sql = "insert into socios (nombre,apellidos,email,fecha_nacimiento,fecha_alta,activo) values (?,?,?,?,CURDATE(),1);";
+        Connection connection = null;
+        int filasAfectadas = 0;
+        try {
+            connection = dataSource.getConnection();
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, socio.getNombre());
+            ps.setString(2, socio.getApellidos());
+            ps.setString(3, socio.getEmail());
+            ps.setObject(4, socio.getFecha_nacimiento());
+
+            filasAfectadas = ps.executeUpdate();
+
+        } catch (SQLException e) {
+            logger.info("Error al insertar el socio {}", socio.getId(), e);
+            cerrarConexion(connection);
+        }
+
+        return filasAfectadas;
     }
 
     private SocioDTO mapearSocio(ResultSet rs) throws SQLException {

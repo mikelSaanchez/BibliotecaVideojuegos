@@ -8,6 +8,7 @@ public class SocioDTO {
     private String apellidos;
     private String email;
     private LocalDate fecha_alta;
+    private LocalDate fecha_nacimiento;
     private Integer alta;
     private Integer edad;
     private Integer prestamosAbiertos;
@@ -16,12 +17,13 @@ public class SocioDTO {
 
     }
 
-    public SocioDTO(int id, String nombre, String apellidos, String email, LocalDate fecha_alta, Integer alta, Integer edad, Integer prestamosAbiertos) {
+    public SocioDTO(int id, String nombre, String apellidos, String email, LocalDate fecha_alta, LocalDate fecha_nacimiento, Integer alta, Integer edad, Integer prestamosAbiertos) {
         this.id = id;
         this.nombre = nombre;
         this.apellidos = apellidos;
         this.email = email;
         this.fecha_alta = fecha_alta;
+        this.fecha_nacimiento = fecha_nacimiento;
         this.alta = alta;
         this.edad = edad;
         this.prestamosAbiertos = prestamosAbiertos;
@@ -37,6 +39,14 @@ public class SocioDTO {
         this.alta = alta;
         this.prestamosAbiertos = prestamosAbiertos;
         this.fecha_alta = fecha_alta;
+    }
+
+    public LocalDate getFecha_nacimiento() {
+        return fecha_nacimiento;
+    }
+
+    public void setFecha_nacimiento(LocalDate fecha_nacimiento) {
+        this.fecha_nacimiento = fecha_nacimiento;
     }
 
     public int getId() {

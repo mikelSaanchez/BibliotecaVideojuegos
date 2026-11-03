@@ -81,7 +81,7 @@ public class VideojuegoRepository {
             filasAfectadas = ps.executeUpdate();
 
         } catch (SQLException e) {
-            logger.info("Error al insertar el alumno {}", videojuego.getId(), e);
+            logger.info("Error al insertar el videojuego {}", videojuego.getId(), e);
             cerrarConexion(connection);
         }
         return filasAfectadas;

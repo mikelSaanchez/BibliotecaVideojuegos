@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+    <link rel="stylesheet" th:href="@{/css/formularios.css}">
+    <meta charset="UTF-8">
+    <title>Insertar Socio</title>
+</head>
+<body>
+<div th:replace="~{fragmentos/menu :: menu}"></div>
+<h1>Insertar Videojuegos</h1>
+
+<div class="container">
+    <div class="form">
+        <form th:action="@{/socios/insertarSocio}"
+              th:object="${socio}" method="post" id="formulario">
+
+            <label for="nombre">Nombre</label>
+            <input type="text" id="nombre" th:field="*{nombre}">
+
+            <label for="apellidos">Apellidos </label>
+            <input type="text" id="apellidos"  th:field="*{apellidos}">
+
+            <label for="email">Correo </label>
+            <input type="text" id="email"  th:field="*{email}">
+
+            <label for="fecha_nacimiento">Fecha de nacimiento </label>
+            <input type="date" id="fecha_nacimiento"  th:field="*{fecha_nacimiento}">
+
+            <input type="submit" value="Insertar">
+        </form>
+    </div>
+</div>
+
+<div th:replace="~{fragmentos/mensajes :: mensajes}"></div>
+</body>
+</html>
