@@ -9,5 +9,25 @@
 
 <div th:replace=" ~{fragmentos/menu :: menu} "></div>
 
+<h1>GameVault · Biblioteca de Videojuegos</h1>
+<div class="contadores" th:object="${listarInicio}">
+    <div class="contador">
+        <span th:text = "*{videojuegos}">0</span>
+        <small>Videojuegos</small>
+    </div>
+    <div class="contador">
+        <span th:text = "*{sociosActivos}">0</span>
+        <small>Socios Activos</small>
+    </div>
+    <div class="contador">
+        <span th:text = "*{prestamosAbiertos}">0</span>
+        <small>Prestamos Abiertos</small>
+    </div>
+    <div class="contador vencidos">
+        <span th:text = "*{prestamosVencidos}">0</span>
+        <small>Prestamos Vencidos</small>
+    </div>
+
+</div>
 </body>
 </html>
