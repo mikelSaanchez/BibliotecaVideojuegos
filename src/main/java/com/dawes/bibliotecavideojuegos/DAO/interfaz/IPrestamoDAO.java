@@ -1,5 +1,6 @@
 package com.dawes.bibliotecavideojuegos.DAO.interfaz;
 
+import com.dawes.bibliotecavideojuegos.DTO.CopiaDTO;
 import com.dawes.bibliotecavideojuegos.DTO.DesplegableDTO;
 import com.dawes.bibliotecavideojuegos.DTO.SocioDTO;
 
@@ -11,4 +12,8 @@ public interface IPrestamoDAO {
     ArrayList<DesplegableDTO> listarCopiasDisponibles();
     int insertarPrestamo(int idSocio, int idCopia, LocalDate fechaPrestamo, LocalDate fechaLimite);
     SocioDTO obtenerSocioPorId(int idSocio);
+    CopiaDTO obtenerCopia(int idCopia);
+    boolean copiaDisponible(int idCopia);
+    int contarPrestamosAbiertos(int idSocio);
+    boolean tienePrestamoVencido(int idSocio, LocalDate hoy);
 }

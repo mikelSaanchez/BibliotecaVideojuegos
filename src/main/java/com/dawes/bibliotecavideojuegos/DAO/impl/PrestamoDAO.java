@@ -1,6 +1,7 @@
 package com.dawes.bibliotecavideojuegos.DAO.impl;
 
 import com.dawes.bibliotecavideojuegos.DAO.interfaz.IPrestamoDAO;
+import com.dawes.bibliotecavideojuegos.DTO.CopiaDTO;
 import com.dawes.bibliotecavideojuegos.DTO.DesplegableDTO;
 import com.dawes.bibliotecavideojuegos.DTO.SocioDTO;
 import com.dawes.bibliotecavideojuegos.repository.PrestamoRepository;
@@ -15,7 +16,7 @@ public class PrestamoDAO implements IPrestamoDAO {
     private final PrestamoRepository prestamoRepository;
     private final SocioRepository socioRepository;
 
-    public PrestamoDAO(PrestamoRepository prestamoRepository,SocioRepository socioRepository ) {
+    public PrestamoDAO(PrestamoRepository prestamoRepository, SocioRepository socioRepository) {
         this.prestamoRepository = prestamoRepository;
         this.socioRepository = socioRepository;
     }
@@ -38,5 +39,25 @@ public class PrestamoDAO implements IPrestamoDAO {
     @Override
     public SocioDTO obtenerSocioPorId(int idSocio) {
         return socioRepository.obtenerSocioPorId(idSocio);
+    }
+
+    @Override
+    public CopiaDTO obtenerCopia(int idCopia) {
+        return prestamoRepository.obtenerCopia(idCopia);
+    }
+
+    @Override
+    public boolean copiaDisponible(int idCopia) {
+        return prestamoRepository.copiaDisponible(idCopia);
+    }
+
+    @Override
+    public int contarPrestamosAbiertos(int idSocio) {
+        return prestamoRepository.contarPrestamosAbiertos(idSocio);
+    }
+
+    @Override
+    public boolean tienePrestamoVencido(int idSocio, LocalDate hoy) {
+        return prestamoRepository.tienePrestamoVencido(idSocio, hoy);
     }
 }

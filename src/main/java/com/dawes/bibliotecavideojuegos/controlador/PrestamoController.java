@@ -1,7 +1,6 @@
 package com.dawes.bibliotecavideojuegos.controlador;
 
 
-import com.dawes.bibliotecavideojuegos.excepcion.ReglaNegocioExcepcion;
 import com.dawes.bibliotecavideojuegos.service.PrestamoService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,6 +33,9 @@ public class PrestamoController {
                                     Model model) {
         model.addAttribute("sociosActivos", prestamoService.obtenerSociosActivos());
         model.addAttribute("copiasDisponibles", prestamoService.obtenerCopiasDisponibles());
+
+        LocalDate fechaLimite = prestamoService.registrarPrestamo(idSocio, idCopia);
+        model.addAttribute("mensaje", "Préstamo registrado correctamente. Fecha límite: " + fechaLimite + ".");
 
 
         return "prestamos/registrar";

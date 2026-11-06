@@ -8,8 +8,6 @@ import com.dawes.bibliotecavideojuegos.excepcion.ReglaNegocioExcepcion;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.Period;
-import java.time.Year;
 import java.util.ArrayList;
 
 @Service
@@ -28,7 +26,7 @@ public class PrestamoService {
         return prestamoDAO.listarCopiasDisponibles();
     }
 
-    public int registrarPrestamo(int idSocio, int idCopia) {
+    public LocalDate registrarPrestamo(int idSocio, int idCopia) {
         LocalDate hoy = LocalDate.now();
         SocioDTO socio = prestamoDAO.obtenerSocioPorId(idSocio);
 
@@ -36,6 +34,37 @@ public class PrestamoService {
             throw new ReglaNegocioExcepcion("RN-1: El socio debe estar activo.");
         }
 
-        return 0;
+        CopiaDTO copia = prestamoDAO.obtenerCopia(idCopia);
+        if (copia == null) {
+            throw new ReglaNegocioExcepcion("RN-2: La copia seleccionada no existe o no está disponible.");
+        }
+
+        if (prestamoDAO.contarPrestamosAbiertos(idSocio) >= 3) {
+            throw new ReglaNegocioExcepcion("RN-3: Un socio no puede tener más de 3 préstamos abiertos a la vez.");
+        }
+
+        int edadSocio = ((socio.getFecha_nacimiento()).getYear() - LocalDate.now().getYear());
+        if (edadSocio < copia.getPegi()) {
+            throw new ReglaNegocioExcepcion("RN-4: La edad del socio debe ser mayor o igual que el PEGI del videojuego ");
+        }
+
+        int anioActual = LocalDate.now().getYear();
+
+        boolean videojuegoNovedad = false;
+
+        if (copia.getAnioLanzamiento() == anioActual || copia.getAnioLanzamiento() == anioActual - 1) {
+            videojuegoNovedad = true;
+        }
+
+        LocalDate fechaLimite;
+        if (videojuegoNovedad == true) {
+            fechaLimite = LocalDate.now().plusDays(7);
+        } else {
+            fechaLimite = LocalDate.now().plusDays(15);
+        }
+        if (prestamoDAO.insertarPrestamo(idSocio, idCopia, hoy, fechaLimite) != 1) {
+            throw new ReglaNegocioExcepcion("No se ha podido registrar el préstamo por un error inesperado. Inténtalo de nuevo.");
+        }
+        return fechaLimite;
     }
 }

@@ -1,5 +1,6 @@
 package com.dawes.bibliotecavideojuegos.repository;
 
+import com.dawes.bibliotecavideojuegos.DTO.CopiaDTO;
 import com.dawes.bibliotecavideojuegos.DTO.DesplegableDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,4 +62,69 @@ public class PrestamoRepository {
             return 0;
         }
     }
+
+    public CopiaDTO obtenerCopia(int idCopia) {
+        String sql = "SELECT c.id, c.codigo_inventario, c.activa, v.titulo, v.anio_lanzamiento, v.pegi, pl.nombre AS plataforma " + "FROM copias c JOIN videojuegos v ON v.id = c.id_videojuego JOIN plataformas pl ON pl.id = c.id_plataforma WHERE c.id = ?";
+        try (Connection connection = dataSource.getConnection(); PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, idCopia);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    CopiaDTO copia = new CopiaDTO();
+                    copia.setId(rs.getInt("id"));
+                    copia.setCodigoInventario(rs.getString("codigo_inventario"));
+                    copia.setActiva(rs.getBoolean("activa"));
+                    copia.setTitulo(rs.getString("titulo"));
+                    copia.setAnioLanzamiento(rs.getInt("anio_lanzamiento"));
+                    copia.setPegi(rs.getInt("pegi"));
+                    copia.setPlataforma(rs.getString("plataforma"));
+                    return copia;
+                }
+            }
+        } catch (SQLException e) {
+            logger.error("Error al obtener la copia {}", idCopia, e);
+        }
+        return null;
+    }
+
+    public boolean copiaDisponible(int idCopia) {
+        String sql = "SELECT c.activa AND NOT EXISTS (SELECT 1 FROM prestamos p WHERE p.id_copia = c.id AND p.fecha_devolucion IS NULL) AS disponible FROM copias c WHERE c.id = ?";
+        try (Connection connection = dataSource.getConnection(); PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, idCopia);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() && rs.getBoolean("disponible");
+            }
+        } catch (SQLException e) {
+            logger.error("Error al comprobar la disponibilidad de la copia {}", idCopia, e);
+            return false;
+        }
+    }
+
+    public int contarPrestamosAbiertos(int idSocio) {
+        String sql = "SELECT COUNT(*) AS total FROM prestamos WHERE id_socio = ? AND fecha_devolucion IS NULL";
+        try (Connection connection = dataSource.getConnection(); PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, idSocio);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? rs.getInt("total") : 0;
+            }
+        } catch (SQLException e) {
+            logger.error("Error al contar los préstamos abiertos del socio {}", idSocio, e);
+            return 0;
+        }
+    }
+
+    public boolean tienePrestamoVencido(int idSocio, LocalDate hoy) {
+        String sql = "SELECT COUNT(*) AS total FROM prestamos WHERE id_socio = ? AND fecha_devolucion IS NULL AND fecha_limite < ?";
+        try (Connection connection = dataSource.getConnection(); PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, idSocio);
+            ps.setDate(2, Date.valueOf(hoy));
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() && rs.getInt("total") > 0;
+            }
+        } catch (SQLException e) {
+            logger.error("Error al comprobar préstamos vencidos del socio {}", idSocio, e);
+            return false;
+        }
+    }
+
+
 }
