@@ -23,4 +23,11 @@ public class SocioDAO implements ISocioDAO {
     public int insertarSocio(SocioDTO socio){
         return socioRepository.insertar(socio);
     }
+
+    @Override
+    public SocioDTO obtenerSocioPorId(int id) {
+        return socioRepository.obtenerSocioPorId(id);
+    }
+
+
 }

@@ -9,4 +9,6 @@ public interface ISocioDAO {
 
     ArrayList<SocioDTO> filtarSocio(String nombre, String apellido, String coreo, Integer activo);
     int insertarSocio (SocioDTO socio);
+    SocioDTO obtenerSocioPorId(int id);
+
 }

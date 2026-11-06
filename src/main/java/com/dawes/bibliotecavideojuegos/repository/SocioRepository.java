@@ -88,6 +88,34 @@ public class SocioRepository {
         return filasAfectadas;
     }
 
+    public SocioDTO obtenerSocioPorId(int id) {
+        String sql = "SELECT id, nombre, apellidos, email, fecha_alta, fecha_nacimiento, activo FROM socios WHERE id = ?";
+        Connection connection = null;
+        try {
+            connection = dataSource.getConnection();
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                SocioDTO socio = new SocioDTO();
+                socio.setId(rs.getInt("id"));
+                socio.setNombre(rs.getString("nombre"));
+                socio.setApellidos(rs.getString("apellidos"));
+                socio.setEmail(rs.getString("email"));
+                socio.setFecha_alta(rs.getDate("fecha_alta").toLocalDate());
+                socio.setFecha_nacimiento(rs.getDate("fecha_nacimiento").toLocalDate());
+                socio.setAlta(rs.getInt("activo"));
+                connection.close();
+                return socio;
+            }
+            connection.close();
+        } catch (SQLException e) {
+            logger.error("Error al obtener socio {}", id, e);
+            cerrarConexion(connection);
+        }
+        return null;
+    }
+
     private SocioDTO mapearSocio(ResultSet rs) throws SQLException {
         return new SocioDTO(rs.getInt("id"),
                 rs.getString("nombre"),

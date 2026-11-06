@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+    <link rel="stylesheet" th:href="@{/css/formularios.css}">
+    <meta charset="UTF-8">
+    <title>Registrar préstamo</title>
+</head>
+<body>
+<div th:replace="~{fragmentos/menu :: menu}"></div>
+<h1>Registrar préstamo</h1>
+<div th:replace="~{fragmentos/mensajes :: mensajes}"></div>
+<div class="container">
+    <div class="form">
+        <form th:action="@{/prestamos/registrarPrestamo}" method="post">
+            <label for="idSocio">Socio</label>
+            <select id="idSocio" name="idSocio" required>
+                <option value="">Selecciona un socio activo</option>
+                <option th:each="socio : ${sociosActivos}"
+                        th:value="${socio.id}"
+                        th:text="${socio.nombre}"></option>
+            </select>
+            <br>
+            <label for="idCopia">Copia disponible</label>
+            <select id="idCopia" name="idCopia" required>
+                <option value="">Selecciona una copia</option>
+                <option th:each="copia : ${copiasDisponibles}"
+                        th:value="${copia.id}"
+                        th:text="${copia.nombre}"></option>
+            </select>
+            <br>
+            <input type="submit" value="Registrar préstamo">
+        </form>
+    </div>
+</div>
+</body>
+</html>
