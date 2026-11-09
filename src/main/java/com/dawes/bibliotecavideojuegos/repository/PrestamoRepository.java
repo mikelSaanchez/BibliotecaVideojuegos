@@ -149,11 +149,18 @@ public class PrestamoRepository {
         if (soloAbiertos) sql.append(" AND p.fecha_devolucion IS NULL");
         sql.append(" ORDER BY p.fecha_prestamo DESC, p.id DESC");
         ArrayList<PrestamoDTO> lista = new ArrayList<>();
-        try (Connection connection = dataSource.getConnection(); PreparedStatement ps = connection.prepareStatement(sql.toString())) {
-            for (int i = 0; i < parametros.size(); i++) ps.setObject(i + 1, parametros.get(i));
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) lista.add(mapearPrestamo(rs));
+        Connection connection = null;
+        try {
+            connection = dataSource.getConnection();
+            PreparedStatement ps = connection.prepareStatement(sql.toString());
+            for (int i = 0; i < parametros.size(); i++) {
+                ps.setObject(i + 1, parametros.get(i));
             }
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                lista.add(mapearPrestamo(rs));
+            }
+
         } catch (SQLException e) {
             logger.error("Error al listar los préstamos", e);
         }
