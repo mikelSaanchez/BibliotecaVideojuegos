@@ -3,6 +3,7 @@ package com.dawes.bibliotecavideojuegos.DAO.impl;
 import com.dawes.bibliotecavideojuegos.DAO.interfaz.IPrestamoDAO;
 import com.dawes.bibliotecavideojuegos.DTO.CopiaDTO;
 import com.dawes.bibliotecavideojuegos.DTO.DesplegableDTO;
+import com.dawes.bibliotecavideojuegos.DTO.PrestamoDTO;
 import com.dawes.bibliotecavideojuegos.DTO.SocioDTO;
 import com.dawes.bibliotecavideojuegos.repository.PrestamoRepository;
 import com.dawes.bibliotecavideojuegos.repository.SocioRepository;
@@ -59,5 +60,10 @@ public class PrestamoDAO implements IPrestamoDAO {
     @Override
     public boolean tienePrestamoVencido(int idSocio, LocalDate hoy) {
         return prestamoRepository.tienePrestamoVencido(idSocio, hoy);
+    }
+
+    @Override
+    public ArrayList<PrestamoDTO> listarPrestamos(String socio, String titulo, LocalDate fechaDesde, boolean soloAbiertos) {
+        return prestamoRepository.listarPrestamos(socio, titulo, fechaDesde, soloAbiertos);
     }
 }

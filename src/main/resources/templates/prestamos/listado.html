@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/index.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/formularios.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/tablas.css}">
+    <meta charset="UTF-8">
+    <title>Listado de préstamos</title>
+</head>
+<body>
+<div th:replace="~{fragmentos/menu :: menu}"></div>
+<h1>Listado de préstamos</h1>
+<div class="container">
+    <div class="form">
+        <form th:action="@{/prestamos/listadoPrestamos}" method="post">
+            <label for="socio">Socio</label>
+            <input type="text" id="socio" name="socio" th:value="${socioFiltro}">
+            <label for="titulo">Videojuego</label>
+            <input type="text" id="titulo" name="titulo" th:value="${tituloFiltro}">
+            <label for="estado">Estado</label>
+            <select id="estado" name="estado">
+                <option value="TODOS" th:selected="${estadoFiltro == 'TODOS'}">Todos</option>
+                <option value="EN_PLAZO" th:selected="${estadoFiltro == 'EN_PLAZO'}">En plazo</option>
+                <option value="VENCIDO" th:selected="${estadoFiltro == 'VENCIDO'}">Vencidos</option>
+                <option value="DEVUELTO" th:selected="${estadoFiltro == 'DEVUELTO'}">Devueltos</option>
+            </select>
+            <label for="fechaDesde">Fecha de préstamo desde</label>
+            <input type="date" id="fechaDesde" name="fechaDesde" th:value="${fechaDesdeFiltro}">
+            <input type="submit" value="Buscar">
+        </form>
+    </div>
+</div>
+<h2 th:if="${listaPrestamos == null or listaPrestamos.isEmpty()}">No hay préstamos que cumplan esos criterios</h2>
+<table th:if="${listaPrestamos != null and !listaPrestamos.isEmpty()}">
+    <tr>
+        <th>Socio</th>
+        <th>Videojuego</th>
+        <th>Plataforma</th>
+        <th>Copia</th>
+        <th>Fecha préstamo</th>
+        <th>Fecha límite</th>
+        <th>Fecha devolución</th>
+        <th>Multa</th>
+        <th>Estado</th>
+        <th>Días retraso</th>
+    </tr>
+    <tr th:each="prestamo : ${listaPrestamos}">
+        <td th:text="${prestamo.socio}"></td>
+        <td th:text="${prestamo.titulo}"></td>
+        <td th:text="${prestamo.plataforma}"></td>
+        <td th:text="${prestamo.codigoInventario}"></td>
+        <td th:text="${prestamo.fechaPrestamo}"></td>
+        <td th:text="${prestamo.fechaLimite}"></td>
+        <td th:text="${prestamo.fechaDevolucion == null ? '-' : prestamo.fechaDevolucion}"></td>
+        <td th:text="|${prestamo.multa} €|"></td>
+        <td><span class="estado" th:classappend="${'estado-' + prestamo.estadoCalculado}"
+                  th:text="${#strings.replace(prestamo.estadoCalculado, '_', ' ')}"></span></td>
+        <td th:text="${prestamo.diasRetraso > 0 ? prestamo.diasRetraso + ' días' : '-'}"></td>
+    </tr>
+</table>
+</body>
+</html>

@@ -2,6 +2,7 @@ package com.dawes.bibliotecavideojuegos.DAO.interfaz;
 
 import com.dawes.bibliotecavideojuegos.DTO.CopiaDTO;
 import com.dawes.bibliotecavideojuegos.DTO.DesplegableDTO;
+import com.dawes.bibliotecavideojuegos.DTO.PrestamoDTO;
 import com.dawes.bibliotecavideojuegos.DTO.SocioDTO;
 
 import java.time.LocalDate;
@@ -16,4 +17,6 @@ public interface IPrestamoDAO {
     boolean copiaDisponible(int idCopia);
     int contarPrestamosAbiertos(int idSocio);
     boolean tienePrestamoVencido(int idSocio, LocalDate hoy);
+
+    ArrayList<PrestamoDTO> listarPrestamos(String socio, String titulo, LocalDate fechaDesde, boolean soloAbiertos);
 }

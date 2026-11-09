@@ -3,11 +3,13 @@ package com.dawes.bibliotecavideojuegos.service;
 import com.dawes.bibliotecavideojuegos.DAO.interfaz.IPrestamoDAO;
 import com.dawes.bibliotecavideojuegos.DTO.CopiaDTO;
 import com.dawes.bibliotecavideojuegos.DTO.DesplegableDTO;
+import com.dawes.bibliotecavideojuegos.DTO.PrestamoDTO;
 import com.dawes.bibliotecavideojuegos.DTO.SocioDTO;
 import com.dawes.bibliotecavideojuegos.excepcion.ReglaNegocioExcepcion;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
 @Service
@@ -66,5 +68,36 @@ public class PrestamoService {
             throw new ReglaNegocioExcepcion("No se ha podido registrar el préstamo por un error inesperado. Inténtalo de nuevo.");
         }
         return fechaLimite;
+    }
+
+    public ArrayList<PrestamoDTO> listarPrestamos(String socio, String titulo, String estado, LocalDate fechaDesde) {
+        ArrayList<PrestamoDTO> prestamos = prestamoDAO.listarPrestamos(socio, titulo, fechaDesde, false);
+        for (PrestamoDTO prestamo : prestamos) {
+            calcularEstado(prestamo, LocalDate.now());
+        }
+        if (estado == null || estado.isBlank() || "TODOS".equals(estado)) {
+            return prestamos;
+        }
+
+        ArrayList<PrestamoDTO> resultado = new ArrayList<>();
+        for (PrestamoDTO prestamo : prestamos) {
+            if (estado.equals(prestamo.getEstadoCalculado())) {
+                resultado.add(prestamo);
+            }
+        }
+        return resultado;
+    }
+
+    private void calcularEstado(PrestamoDTO prestamo, LocalDate hoy) {
+        if (prestamo.getFechaDevolucion() != null) {
+            prestamo.setEstadoCalculado("DEVUELTO");
+            prestamo.setDiasRetraso(0);
+        } else if (prestamo.getFechaLimite().isBefore(hoy)) {
+            prestamo.setEstadoCalculado("VENCIDO");
+            prestamo.setDiasRetraso(ChronoUnit.DAYS.between(prestamo.getFechaLimite(), hoy));
+        } else {
+            prestamo.setEstadoCalculado("EN_PLAZO");
+            prestamo.setDiasRetraso(0);
+        }
     }
 }

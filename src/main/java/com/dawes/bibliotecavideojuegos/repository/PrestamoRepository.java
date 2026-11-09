@@ -2,6 +2,7 @@ package com.dawes.bibliotecavideojuegos.repository;
 
 import com.dawes.bibliotecavideojuegos.DTO.CopiaDTO;
 import com.dawes.bibliotecavideojuegos.DTO.DesplegableDTO;
+import com.dawes.bibliotecavideojuegos.DTO.PrestamoDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -124,6 +125,59 @@ public class PrestamoRepository {
             logger.error("Error al comprobar préstamos vencidos del socio {}", idSocio, e);
             return false;
         }
+    }
+
+    public ArrayList<PrestamoDTO> listarPrestamos(String socio, String titulo, LocalDate fechaDesde, boolean soloAbiertos) {
+        StringBuilder sql = new StringBuilder("SELECT p.id, p.id_socio, p.id_copia, p.fecha_prestamo, p.fecha_limite, p.fecha_devolucion, p.multa, " +
+                "CONCAT(s.nombre, ' ', s.apellidos) AS socio, v.titulo, pl.nombre AS plataforma, c.codigo_inventario " +
+                "FROM prestamos p JOIN socios s ON s.id = p.id_socio JOIN copias c ON c.id = p.id_copia " +
+                "JOIN videojuegos v ON v.id = c.id_videojuego JOIN plataformas pl ON pl.id = c.id_plataforma WHERE 1 = 1");
+        ArrayList<Object> parametros = new ArrayList<>();
+        if (socio != null && !socio.isBlank()) {
+            sql.append(" AND (s.nombre LIKE ? OR s.apellidos LIKE ?)");
+            parametros.add("%" + socio + "%");
+            parametros.add("%" + socio + "%");
+        }
+        if (titulo != null && !titulo.isBlank()) {
+            sql.append(" AND v.titulo LIKE ?");
+            parametros.add("%" + titulo + "%");
+        }
+        if (fechaDesde != null) {
+            sql.append(" AND p.fecha_prestamo >= ?");
+            parametros.add(Date.valueOf(fechaDesde));
+        }
+        if (soloAbiertos) sql.append(" AND p.fecha_devolucion IS NULL");
+        sql.append(" ORDER BY p.fecha_prestamo DESC, p.id DESC");
+        ArrayList<PrestamoDTO> lista = new ArrayList<>();
+        try (Connection connection = dataSource.getConnection(); PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            for (int i = 0; i < parametros.size(); i++) ps.setObject(i + 1, parametros.get(i));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) lista.add(mapearPrestamo(rs));
+            }
+        } catch (SQLException e) {
+            logger.error("Error al listar los préstamos", e);
+        }
+        return lista;
+    }
+
+
+    private PrestamoDTO mapearPrestamo(ResultSet rs) throws SQLException {
+        PrestamoDTO prestamo = new PrestamoDTO();
+        prestamo.setId(rs.getInt("id"));
+        prestamo.setIdSocio(rs.getInt("id_socio"));
+        prestamo.setIdCopia(rs.getInt("id_copia"));
+        prestamo.setFechaPrestamo(rs.getDate("fecha_prestamo").toLocalDate());
+        prestamo.setFechaLimite(rs.getDate("fecha_limite").toLocalDate());
+        Date fechaDevolucion = rs.getDate("fecha_devolucion");
+        if (fechaDevolucion != null) {
+            prestamo.setFechaDevolucion(fechaDevolucion.toLocalDate());
+        }
+        prestamo.setMulta(rs.getBigDecimal("multa"));
+        prestamo.setSocio(rs.getString("socio"));
+        prestamo.setTitulo(rs.getString("titulo"));
+        prestamo.setPlataforma(rs.getString("plataforma"));
+        prestamo.setCodigoInventario(rs.getString("codigo_inventario"));
+        return prestamo;
     }
 
 

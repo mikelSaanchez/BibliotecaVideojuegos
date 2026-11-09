@@ -2,6 +2,7 @@ package com.dawes.bibliotecavideojuegos.controlador;
 
 
 import com.dawes.bibliotecavideojuegos.service.PrestamoService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,4 +41,29 @@ public class PrestamoController {
 
         return "prestamos/registrar";
     }
+
+    @GetMapping("/listadoPrestamos")
+    public String listadoPrestamos(@RequestParam(defaultValue = "TODOS") String estado, Model model) {
+        cargarListado(model, null, null, estado, null);
+        return "prestamos/listado";
+    }
+
+    @PostMapping("/listadoPrestamos")
+    public String buscarPrestamos(@RequestParam(required = false) String socio,
+                                  @RequestParam(required = false) String titulo,
+                                  @RequestParam(defaultValue = "TODOS") String estado,
+                                  @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaDesde,
+                                  Model model) {
+        cargarListado(model, socio, titulo, estado, fechaDesde);
+        return "prestamos/listado";
+    }
+
+    private void cargarListado(Model model, String socio, String titulo, String estado, LocalDate fechaDesde) {
+        model.addAttribute("listaPrestamos", prestamoService.listarPrestamos(socio, titulo, estado, fechaDesde));
+        model.addAttribute("socioFiltro", socio);
+        model.addAttribute("tituloFiltro", titulo);
+        model.addAttribute("estadoFiltro", estado);
+        model.addAttribute("fechaDesdeFiltro", fechaDesde);
+    }
+
 }
