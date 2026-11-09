@@ -44,7 +44,7 @@ public class PrestamoService {
         }
 
         int edadSocio = ((socio.getFecha_nacimiento()).getYear() - LocalDate.now().getYear());
-        if (edadSocio < copia.getPegi()) {
+        if (edadSocio > copia.getPegi()) {
             throw new ReglaNegocioExcepcion("RN-4: La edad del socio debe ser mayor o igual que el PEGI del videojuego ");
         }
 

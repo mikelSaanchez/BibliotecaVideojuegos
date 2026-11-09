@@ -9,7 +9,6 @@
 <body>
 <div th:replace="~{fragmentos/menu :: menu}"></div>
 <h1>Registrar préstamo</h1>
-<div th:replace="~{fragmentos/mensajes :: mensajes}"></div>
 <div class="container">
     <div class="form">
         <form th:action="@{/prestamos/registrarPrestamo}" method="post">
@@ -32,6 +31,7 @@
             <input type="submit" value="Registrar préstamo">
         </form>
     </div>
+    <div th:replace="~{fragmentos/mensajes :: mensajes}"></div>
 </div>
 </body>
 </html>
