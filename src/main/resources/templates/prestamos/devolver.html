@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/index.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/formularios.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/tablas.css}">
+    <meta charset="UTF-8">
+    <title>Devolver préstamo</title>
+</head>
+<body>
+<div th:replace="~{fragmentos/menu :: menu}"></div>
+<h1>Devolver préstamo</h1>
+<div th:replace="~{fragmentos/mensajes :: mensajes}"></div>
+<div class="container">
+    <div class="form">
+        <form th:action="@{/prestamos/devolverPrestamo}" method="get">
+            <label for="socio">Filtrar por socio</label>
+            <input type="text" id="socio" name="socio" th:value="${socioFiltro}">
+            <input type="submit" value="Buscar">
+        </form>
+    </div>
+</div>
+<h2 th:if="${listaPrestamos == null or listaPrestamos.isEmpty()}">No hay préstamos abiertos para devolver</h2>
+<table th:if="${listaPrestamos != null and !listaPrestamos.isEmpty()}">
+    <tr><th>Socio</th><th>Videojuego</th><th>Plataforma</th><th>Copia</th><th>Fecha préstamo</th><th>Fecha límite</th><th>Estado</th><th>Devolución</th></tr>
+    <tr th:each="prestamo : ${listaPrestamos}">
+        <td th:text="${prestamo.socio}"></td>
+        <td th:text="${prestamo.titulo}"></td>
+        <td th:text="${prestamo.plataforma}"></td>
+        <td th:text="${prestamo.codigoInventario}"></td>
+        <td th:text="${prestamo.fechaPrestamo}"></td>
+        <td th:text="${prestamo.fechaLimite}"></td>
+        <td><span class="estado" th:classappend="${'estado-' + prestamo.estadoCalculado}"
+                  th:text="${#strings.replace(prestamo.estadoCalculado, '_', ' ')}"></span></td>
+        <td>
+            <form th:action="@{/prestamos/devolverPrestamo}" method="post">
+                <input type="hidden" name="idPrestamo" th:value="${prestamo.id}">
+                <input type="hidden" name="socio" th:value="${socioFiltro}">
+                <label><input type="checkbox" name="copiaDanada" value="true"> Copia dañada</label>
+                <input type="submit" value="Devolver">
+            </form>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

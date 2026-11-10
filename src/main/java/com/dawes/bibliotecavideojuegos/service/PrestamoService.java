@@ -8,6 +8,8 @@ import com.dawes.bibliotecavideojuegos.DTO.SocioDTO;
 import com.dawes.bibliotecavideojuegos.excepcion.ReglaNegocioExcepcion;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -86,6 +88,35 @@ public class PrestamoService {
             }
         }
         return resultado;
+    }
+
+    public BigDecimal devolverPrestamo(int idPrestamo, boolean copiaDanada) {
+        ArrayList<PrestamoDTO> prestamosAbiertos = prestamoDAO.listarPrestamos(null, null, null, true);
+        PrestamoDTO prestamo = null;
+        for (PrestamoDTO prestamoAbierto : prestamosAbiertos) {
+            if (prestamoAbierto.getId().equals(idPrestamo)) {
+                prestamo = prestamoAbierto;
+                break;
+            }
+        }
+        if (prestamo == null) {
+            throw new ReglaNegocioExcepcion("El préstamo ya está devuelto o no existe.");
+        }
+
+        LocalDate hoy = LocalDate.now();
+        long diasRetraso = Math.max(0, ChronoUnit.DAYS.between(prestamo.getFechaLimite(), hoy));
+        BigDecimal multa = BigDecimal.valueOf(diasRetraso).multiply(new BigDecimal("0.50")).setScale(2, RoundingMode.HALF_UP);
+        boolean devuelto = prestamoDAO.devolverPrestamo(idPrestamo, prestamo.getIdCopia(), hoy, multa, copiaDanada);
+        if (!devuelto) {
+            throw new ReglaNegocioExcepcion("No se ha podido devolver el préstamo. Puede que ya se haya devuelto.");
+        }
+        return multa;
+    }
+
+    public ArrayList<PrestamoDTO> listarPrestamosAbiertos(String socio) {
+        ArrayList<PrestamoDTO> prestamos = prestamoDAO.listarPrestamos(socio, null, null, true);
+        for (PrestamoDTO prestamo : prestamos) calcularEstado(prestamo, LocalDate.now());
+        return prestamos;
     }
 
     private void calcularEstado(PrestamoDTO prestamo, LocalDate hoy) {

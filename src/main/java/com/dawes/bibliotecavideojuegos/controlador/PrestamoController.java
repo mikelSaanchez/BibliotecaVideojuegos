@@ -1,6 +1,7 @@
 package com.dawes.bibliotecavideojuegos.controlador;
 
 
+import com.dawes.bibliotecavideojuegos.excepcion.ReglaNegocioExcepcion;
 import com.dawes.bibliotecavideojuegos.service.PrestamoService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Controller
@@ -56,6 +58,29 @@ public class PrestamoController {
                                   Model model) {
         cargarListado(model, socio, titulo, estado, fechaDesde);
         return "prestamos/listado";
+    }
+
+    @GetMapping("/devolverPrestamo")
+    public String mostrarDevoluciones(@RequestParam(required = false) String socio, Model model) {
+        model.addAttribute("listaPrestamos", prestamoService.listarPrestamosAbiertos(socio));
+        model.addAttribute("socioFiltro", socio);
+        return "prestamos/devolver";
+    }
+
+    @PostMapping("/devolverPrestamo")
+    public String devolverPrestamo(@RequestParam int idPrestamo,
+                                   @RequestParam(defaultValue = "false") boolean copiaDanada,
+                                   @RequestParam(required = false) String socio,
+                                   Model model) {
+        try {
+            BigDecimal multa = prestamoService.devolverPrestamo(idPrestamo, copiaDanada);
+            model.addAttribute("mensaje", "Préstamo devuelto correctamente. Multa calculada: " + multa + " €.");
+        } catch (ReglaNegocioExcepcion e) {
+            model.addAttribute("error", e.getMessage());
+        }
+        model.addAttribute("listaPrestamos", prestamoService.listarPrestamosAbiertos(socio));
+        model.addAttribute("socioFiltro", socio);
+        return "prestamos/devolver";
     }
 
     private void cargarListado(Model model, String socio, String titulo, String estado, LocalDate fechaDesde) {
