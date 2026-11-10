@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.math.BigDecimal;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -167,6 +168,41 @@ public class PrestamoRepository {
         return lista;
     }
 
+    public boolean devolverPrestamo(int idPrestamo, int idCopia, LocalDate fechaDevolucion, BigDecimal multa, boolean copiaDanada) {
+        String sqlPrestamo = "UPDATE prestamos SET fecha_devolucion = ?, multa = ? WHERE id = ? AND fecha_devolucion IS NULL";
+        String sqlCopia = "UPDATE copias SET estado = 'DANADO', activa = 0 WHERE id = ?";
+        try (Connection connection = dataSource.getConnection()) {
+            connection.setAutoCommit(false);
+            try {
+                try (PreparedStatement psPrestamo = connection.prepareStatement(sqlPrestamo)) {
+                    psPrestamo.setDate(1, Date.valueOf(fechaDevolucion));
+                    psPrestamo.setBigDecimal(2, multa);
+                    psPrestamo.setInt(3, idPrestamo);
+                    if (psPrestamo.executeUpdate() != 1) {
+                        connection.rollback();
+                        return false;
+                    }
+                }
+                if (copiaDanada) {
+                    try (PreparedStatement psCopia = connection.prepareStatement(sqlCopia)) {
+                        psCopia.setInt(1, idCopia);
+                        if (psCopia.executeUpdate() != 1) {
+                            connection.rollback();
+                            return false;
+                        }
+                    }
+                }
+                connection.commit();
+                return true;
+            } catch (SQLException e) {
+                connection.rollback();
+                throw e;
+            }
+        } catch (SQLException e) {
+            logger.error("Error al devolver el préstamo {}", idPrestamo, e);
+            return false;
+        }
+    }
 
     private PrestamoDTO mapearPrestamo(ResultSet rs) throws SQLException {
         PrestamoDTO prestamo = new PrestamoDTO();

@@ -9,6 +9,7 @@ import com.dawes.bibliotecavideojuegos.repository.PrestamoRepository;
 import com.dawes.bibliotecavideojuegos.repository.SocioRepository;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -65,5 +66,10 @@ public class PrestamoDAO implements IPrestamoDAO {
     @Override
     public ArrayList<PrestamoDTO> listarPrestamos(String socio, String titulo, LocalDate fechaDesde, boolean soloAbiertos) {
         return prestamoRepository.listarPrestamos(socio, titulo, fechaDesde, soloAbiertos);
+    }
+
+    @Override
+    public boolean devolverPrestamo(int idPrestamo, int idCopia, LocalDate fechaDevolucion, BigDecimal multa, boolean copiaDanada) {
+        return prestamoRepository.devolverPrestamo(idPrestamo, idCopia, fechaDevolucion, multa, copiaDanada);
     }
 }

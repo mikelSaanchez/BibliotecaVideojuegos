@@ -5,6 +5,7 @@ import com.dawes.bibliotecavideojuegos.DTO.DesplegableDTO;
 import com.dawes.bibliotecavideojuegos.DTO.PrestamoDTO;
 import com.dawes.bibliotecavideojuegos.DTO.SocioDTO;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -19,4 +20,6 @@ public interface IPrestamoDAO {
     boolean tienePrestamoVencido(int idSocio, LocalDate hoy);
 
     ArrayList<PrestamoDTO> listarPrestamos(String socio, String titulo, LocalDate fechaDesde, boolean soloAbiertos);
+
+    boolean devolverPrestamo(int idPrestamo, int idCopia, LocalDate fechaDevolucion, BigDecimal multa, boolean copiaDanada);
 }
