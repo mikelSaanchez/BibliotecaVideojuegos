@@ -18,6 +18,7 @@ import java.util.ArrayList;
 public class PrestamoService {
     private final IPrestamoDAO prestamoDAO;
 
+
     public PrestamoService(IPrestamoDAO prestamoDAO) {
         this.prestamoDAO = prestamoDAO;
     }
@@ -31,6 +32,7 @@ public class PrestamoService {
     }
 
     public LocalDate registrarPrestamo(int idSocio, int idCopia) {
+
         LocalDate hoy = LocalDate.now();
         SocioDTO socio = prestamoDAO.obtenerSocioPorId(idSocio);
 
@@ -39,6 +41,7 @@ public class PrestamoService {
         }
 
         CopiaDTO copia = prestamoDAO.obtenerCopia(idCopia);
+
         if (copia == null) {
             throw new ReglaNegocioExcepcion("RN-2: La copia seleccionada no existe o no está disponible.");
         }
@@ -48,12 +51,12 @@ public class PrestamoService {
         }
 
         int edadSocio = ((socio.getFecha_nacimiento()).getYear() - LocalDate.now().getYear());
+
         if (edadSocio > copia.getPegi()) {
             throw new ReglaNegocioExcepcion("RN-4: La edad del socio debe ser mayor o igual que el PEGI del videojuego ");
         }
 
         int anioActual = LocalDate.now().getYear();
-
         boolean videojuegoNovedad = false;
 
         if (copia.getAnioLanzamiento() == anioActual || copia.getAnioLanzamiento() == anioActual - 1) {
@@ -61,44 +64,56 @@ public class PrestamoService {
         }
 
         LocalDate fechaLimite;
-        if (videojuegoNovedad == true) {
+
+        if (videojuegoNovedad) {
             fechaLimite = LocalDate.now().plusDays(7);
         } else {
             fechaLimite = LocalDate.now().plusDays(15);
         }
-        if (prestamoDAO.insertarPrestamo(idSocio, idCopia, hoy, fechaLimite) != 1) {
+
+        int filasAfectadas = prestamoDAO.insertarPrestamo(idSocio, idCopia, hoy, fechaLimite);
+
+        if (filasAfectadas != 1) {
             throw new ReglaNegocioExcepcion("No se ha podido registrar el préstamo por un error inesperado. Inténtalo de nuevo.");
         }
+
         return fechaLimite;
     }
 
     public ArrayList<PrestamoDTO> listarPrestamos(String socio, String titulo, String estado, LocalDate fechaDesde) {
         ArrayList<PrestamoDTO> prestamos = prestamoDAO.listarPrestamos(socio, titulo, fechaDesde, false);
+
         for (PrestamoDTO prestamo : prestamos) {
             calcularEstado(prestamo, LocalDate.now());
         }
+
         if (estado == null || estado.isBlank() || "TODOS".equals(estado)) {
             return prestamos;
         }
 
         ArrayList<PrestamoDTO> resultado = new ArrayList<>();
+
         for (PrestamoDTO prestamo : prestamos) {
             if (estado.equals(prestamo.getEstadoCalculado())) {
                 resultado.add(prestamo);
             }
         }
+
         return resultado;
     }
 
     public BigDecimal devolverPrestamo(int idPrestamo, boolean copiaDanada) {
+
         ArrayList<PrestamoDTO> prestamosAbiertos = prestamoDAO.listarPrestamos(null, null, null, true);
         PrestamoDTO prestamo = null;
+
         for (PrestamoDTO prestamoAbierto : prestamosAbiertos) {
             if (prestamoAbierto.getId().equals(idPrestamo)) {
                 prestamo = prestamoAbierto;
                 break;
             }
         }
+
         if (prestamo == null) {
             throw new ReglaNegocioExcepcion("El préstamo ya está devuelto o no existe.");
         }
@@ -106,16 +121,23 @@ public class PrestamoService {
         LocalDate hoy = LocalDate.now();
         long diasRetraso = Math.max(0, ChronoUnit.DAYS.between(prestamo.getFechaLimite(), hoy));
         BigDecimal multa = BigDecimal.valueOf(diasRetraso).multiply(new BigDecimal("0.50")).setScale(2, RoundingMode.HALF_UP);
+
         boolean devuelto = prestamoDAO.devolverPrestamo(idPrestamo, prestamo.getIdCopia(), hoy, multa, copiaDanada);
+
         if (!devuelto) {
             throw new ReglaNegocioExcepcion("No se ha podido devolver el préstamo. Puede que ya se haya devuelto.");
         }
+
         return multa;
     }
 
     public ArrayList<PrestamoDTO> listarPrestamosAbiertos(String socio) {
         ArrayList<PrestamoDTO> prestamos = prestamoDAO.listarPrestamos(socio, null, null, true);
-        for (PrestamoDTO prestamo : prestamos) calcularEstado(prestamo, LocalDate.now());
+
+        for (PrestamoDTO prestamo : prestamos) {
+            calcularEstado(prestamo, LocalDate.now());
+        }
+
         return prestamos;
     }
 
