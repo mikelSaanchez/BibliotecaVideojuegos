@@ -6,7 +6,7 @@ Proyecto basado en la estructura que ya tenías: paquetes `DTO`, `DAO`, `reposit
 
 1. Ejecuta `biblioteca_videojuegos.sql` en MySQL Workbench para crear y rellenar la base de datos `biblioteca`.
 2. El script empieza borrando y creando de nuevo `biblioteca`; guarda antes cualquier dato de esa base que quieras conservar.
-3. Si tus credenciales MySQL son distintas, cámbialas en `main/resources/application.properties`.
+3. Si tus credenciales MySQL son distintas, cámbialas en `src/main/resources/application.properties`.
 
 ## Arrancar en Windows
 
