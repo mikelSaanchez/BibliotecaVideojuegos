@@ -27,4 +27,4 @@ Después abre `http://localhost:8080`.
 - Devolución, cálculo de multa y actualización transaccional de la copia dañada.
 - Mensajes de éxito y error en las vistas, usando el fragmento existente.
 
-La búsqueda de videojuegos usa los filtros opcionales con `StringBuilder` y parámetros `?`, siguiendo el ejemplo de SQL dinámico del PDF 2.4.
+
