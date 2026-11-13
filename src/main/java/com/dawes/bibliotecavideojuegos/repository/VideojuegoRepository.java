@@ -95,7 +95,7 @@ public class VideojuegoRepository {
                 "join prestamos p\n" +
                 "on c.id = p.id_copia\n" +
                 "group by v.id \n" +
-                "order by prestamosTotales DESC\n" +
+                "order by prestamosTotales DESC, v.titulo ASC\n" +
                 "limit 5;");
 
 
