@@ -86,6 +86,37 @@ public class VideojuegoRepository {
         }
         return filasAfectadas;
     }
+
+    public ArrayList<VideojuegoDTO> VideoJuegosMasPrestados() {
+        StringBuilder sql = new StringBuilder("select v.id,v.titulo, count(v.id) AS prestamosTotales\n" +
+                "from videojuegos v\n" +
+                "join copias c\n" +
+                "on v.id = c.id_videojuego\n" +
+                "join prestamos p\n" +
+                "on c.id = p.id_copia\n" +
+                "group by v.id \n" +
+                "order by prestamosTotales DESC\n" +
+                "limit 5;");
+
+
+        ArrayList<VideojuegoDTO> listaVideojuego = new ArrayList<>();
+        Connection connection = null;
+        try {
+            connection = dataSource.getConnection();
+            PreparedStatement ps = connection.prepareStatement(sql.toString());
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                listaVideojuego.add(mapearVideojuegoPrestado(rs));
+            }
+            connection.close();
+        } catch (SQLException e) {
+            logger.error("Error al filtrar videojuego", e);
+            cerrarConexion(connection);
+        }
+        return listaVideojuego;
+    }
+
     private VideojuegoDTO mapearVideojuego(ResultSet rs) throws SQLException {
         return new VideojuegoDTO(
                 rs.getInt("id"),
@@ -95,6 +126,13 @@ public class VideojuegoRepository {
                 rs.getInt("pegi"),
                 rs.getInt("copias_totales"),
                 rs.getInt("copias_disponibles")
+        );
+    }
+    private VideojuegoDTO mapearVideojuegoPrestado(ResultSet rs) throws SQLException {
+        return new VideojuegoDTO(
+                rs.getInt("id"),
+                rs.getString("titulo"),
+                rs.getInt("prestamosTotales")
         );
     }
 

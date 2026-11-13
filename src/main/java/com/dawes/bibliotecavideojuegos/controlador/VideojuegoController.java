@@ -34,6 +34,7 @@ public class VideojuegoController {
         model.addAttribute("desplegableDesarrolladora", videojuegoService.obtenerDesplegableDesarrolladoras());
         return "videojuegos/listado";
     }
+
     @GetMapping("/insertarVideojuego")
     public String mostrarFormularioAlta(Model model) {
         model.addAttribute("videojuego", new VideojuegoDTO());
@@ -43,11 +44,11 @@ public class VideojuegoController {
 
     @PostMapping("/insertarVideojuego")
     public String insertarVideoJuego(@ModelAttribute("videojuego") VideojuegoDTO videojuego,
-                                 Model model) {
+                                     Model model) {
         try {
 
             videojuegoService.insertarVideojuego(videojuego);
-            model.addAttribute("mensaje", "Videojuego " + videojuego.getTitulo() +  " insertado correctamente.");
+            model.addAttribute("mensaje", "Videojuego " + videojuego.getTitulo() + " insertado correctamente.");
             model.addAttribute("videojuego", new VideojuegoDTO());
 
         } catch (ReglaNegocioExcepcion e) {
@@ -55,6 +56,13 @@ public class VideojuegoController {
         }
         model.addAttribute("desplegableDesarrolladoras", videojuegoService.obtenerDesplegableDesarrolladoras());
         return "videojuegos/insertar";
+    }
+
+    @GetMapping("/VideoJuegosMasPrestados")
+    public String ListadoVideoJuegosMasPrestados(Model model) {
+        model.addAttribute("listaVideoJuegos", videojuegoService.VideoJuegosMasPrestados());
+
+        return "videojuegos/masPrestados";
     }
 
 }

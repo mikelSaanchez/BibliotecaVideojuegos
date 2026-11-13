@@ -258,6 +258,26 @@ public class PrestamoRepository {
             return false;
         }
     }
+    public int renovarPrestamo(int idPrestamo, LocalDate nuevaFechaLimite) {
+        String sql = "UPDATE prestamos SET fecha_limite = ?, renovaciones = renovaciones + 1 WHERE id = ? AND fecha_devolucion IS NULL";
+        Connection connection = null;
+        int filasAfectadas = 0;
+        try {
+            connection = dataSource.getConnection();
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setDate(1, Date.valueOf(nuevaFechaLimite));
+            ps.setInt(2, idPrestamo);
+
+            filasAfectadas = ps.executeUpdate();
+            connection.close();
+        } catch (SQLException e) {
+            logger.error("Error al renovar el préstamo {}", idPrestamo, e);
+            cerrarConexion(connection);
+            return 0;
+        }
+
+        return filasAfectadas;
+    }
 
     private PrestamoDTO mapearPrestamo(ResultSet rs) throws SQLException {
         PrestamoDTO prestamo = new PrestamoDTO();

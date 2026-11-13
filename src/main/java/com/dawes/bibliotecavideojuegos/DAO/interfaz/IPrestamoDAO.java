@@ -22,4 +22,6 @@ public interface IPrestamoDAO {
     ArrayList<PrestamoDTO> listarPrestamos(String socio, String titulo, LocalDate fechaDesde, boolean soloAbiertos);
 
     boolean devolverPrestamo(int idPrestamo, int idCopia, LocalDate fechaDevolucion, BigDecimal multa, boolean copiaDanada);
+
+    int renovarPrestamo(int idPrestamo, LocalDate nuevaFechaLimite);
 }

@@ -18,6 +18,7 @@ public class PrestamoDTO {
     private String estadoCalculado;
     private long diasRetraso;
     private boolean copiaDanada;
+    private int renovaciones;
 
     public PrestamoDTO() {
     }
@@ -37,6 +38,14 @@ public class PrestamoDTO {
         this.estadoCalculado = estadoCalculado;
         this.diasRetraso = diasRetraso;
         this.copiaDanada = copiaDanada;
+    }
+
+    public int getRenovaciones() {
+        return renovaciones;
+    }
+
+    public void setRenovaciones(int renovaciones) {
+        this.renovaciones = renovaciones;
     }
 
     public Integer getId() {

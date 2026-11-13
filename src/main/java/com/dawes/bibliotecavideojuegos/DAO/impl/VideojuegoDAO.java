@@ -22,4 +22,8 @@ private final VideojuegoRepository videojuegoRepository;
     public int insertarVideojuego(VideojuegoDTO videojuego) {
         return videojuegoRepository.insertar(videojuego);
     }
+
+    public ArrayList<VideojuegoDTO> VideoJuegosMasPrestados() {
+        return videojuegoRepository.VideoJuegosMasPrestados();
+    }
 }

@@ -98,7 +98,6 @@ public class PrestamoService {
                 resultado.add(prestamo);
             }
         }
-
         return resultado;
     }
 
@@ -139,6 +138,35 @@ public class PrestamoService {
         }
 
         return prestamos;
+    }
+
+    public LocalDate renovarPrestamo(int idPrestamo) {
+
+        ArrayList<PrestamoDTO> prestamosAbiertos = prestamoDAO.listarPrestamos(null, null, null, true);
+        PrestamoDTO prestamo = null;
+
+        for (PrestamoDTO prestamoAbierto : prestamosAbiertos) {
+            if (prestamoAbierto.getId().equals(idPrestamo)) {
+                prestamo = prestamoAbierto;
+                break;
+            }
+        }
+
+        if (prestamo.getFechaLimite().isBefore(LocalDate.now())) {
+            throw new ReglaNegocioExcepcion("RN-RE1. No se puede renovar un préstamo vencido.");
+        }
+
+        if (prestamo.getRenovaciones() >= 1) {
+            throw new ReglaNegocioExcepcion("RN-RE2. Como máximo se puede renovar una vez cada préstamo.");
+        }
+
+        LocalDate nuevaFechaLimite = prestamo.getFechaLimite().plusDays(7);
+        int filasAfectadas = prestamoDAO.renovarPrestamo(idPrestamo, nuevaFechaLimite);
+
+        if (filasAfectadas != 1) {
+            throw new ReglaNegocioExcepcion("No se ha podido renovar el préstamo. Puede que ya se haya devuelto.");
+        }
+        return nuevaFechaLimite;
     }
 
     private void calcularEstado(PrestamoDTO prestamo, LocalDate hoy) {

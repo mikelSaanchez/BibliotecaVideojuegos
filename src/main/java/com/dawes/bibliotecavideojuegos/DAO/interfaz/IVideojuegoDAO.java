@@ -8,4 +8,6 @@ public interface IVideojuegoDAO {
 
     ArrayList<VideojuegoDTO> filtarVideojuego(String titulo, Integer id_desarrolladora, Integer anio_lanzamiento, Integer pegi, Boolean activo);
     int insertarVideojuego (VideojuegoDTO videojuego);
+    ArrayList<VideojuegoDTO> VideoJuegosMasPrestados();
+
 }

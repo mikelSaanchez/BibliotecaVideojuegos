@@ -10,6 +10,7 @@ public class VideojuegoDTO {
     private boolean disponible;
     private Integer copiasTotales;
     private Integer copiasDisponibles;
+    private Integer prestamosTotales;
 
     public VideojuegoDTO() {
     }
@@ -35,6 +36,20 @@ public class VideojuegoDTO {
         this.pegi = pegi;
         this.copiasTotales = copiasTotales;
         this.copiasDisponibles = copiasDisponibles;
+    }
+
+    public VideojuegoDTO(int id, String titulo, Integer prestamosTotales) {
+        this.id = id;
+        this.titulo = titulo;
+        this.prestamosTotales = prestamosTotales;
+    }
+
+    public Integer getPrestamosTotales() {
+        return prestamosTotales;
+    }
+
+    public void setPrestamosTotales(Integer prestamosTotales) {
+        this.prestamosTotales = prestamosTotales;
     }
 
     public int getId() {

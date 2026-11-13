@@ -30,6 +30,7 @@
         </form>
     </div>
 </div>
+<div th:replace="~{fragmentos/mensajes :: mensajes}"></div>
 <h2 th:if="${listaPrestamos == null or listaPrestamos.isEmpty()}">No hay préstamos que cumplan esos criterios</h2>
 <table th:if="${listaPrestamos != null and !listaPrestamos.isEmpty()}">
     <tr>
@@ -43,6 +44,7 @@
         <th>Multa</th>
         <th>Estado</th>
         <th>Días retraso</th>
+        <th>Renovaciones</th>
     </tr>
     <tr th:each="prestamo : ${listaPrestamos}">
         <td th:text="${prestamo.socio}"></td>
@@ -56,6 +58,13 @@
         <td><span class="estado" th:classappend="${'estado-' + prestamo.estadoCalculado}"
                   th:text="${#strings.replace(prestamo.estadoCalculado, '_', ' ')}"></span></td>
         <td th:text="${prestamo.diasRetraso > 0 ? prestamo.diasRetraso + ' días' : '-'}"></td>
+        <td>
+            <form th:if="${!prestamo.estadoCalculado.equalsIgnoreCase('DEVUELTO')}" th:action="@{/prestamos/listadoPrestamos}" method="post">
+                <input type="hidden" name="idPrestamo" th:value="${prestamo.id}">
+                <input type="hidden" name="socio" th:value="${socioFiltro}">
+                <input type="submit" value="Renovar">
+            </form>
+        </td>
     </tr>
 </table>
 </body>

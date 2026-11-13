@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/index.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/formularios.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/tablas.css}">
+    <meta charset="UTF-8">
+    <title>Listado de videojuegos mas prestados</title>
+</head>
+
+<body>
+
+<div th:replace="~{fragmentos/menu :: menu}"></div>
+<h1>Listado de Videojuegos mas Prestados</h1>
+
+<div class="container">
+    <table th:if="${listaVideoJuegos != null and !listaVideoJuegos.isEmpty()}">
+        <tr>
+            <th>ID</th>
+            <th>Titulo</th>
+            <th>Prestamos</th>
+
+        </tr>
+        <tr th:each="videojuego : ${listaVideoJuegos}">
+            <td th:text="${videojuego.id}"></td>
+            <td th:text="${videojuego.titulo}"></td>
+            <td th:text="${videojuego.prestamosTotales}"></td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

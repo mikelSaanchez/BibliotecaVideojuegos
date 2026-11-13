@@ -72,4 +72,9 @@ public class PrestamoDAO implements IPrestamoDAO {
     public boolean devolverPrestamo(int idPrestamo, int idCopia, LocalDate fechaDevolucion, BigDecimal multa, boolean copiaDanada) {
         return prestamoRepository.devolverPrestamo(idPrestamo, idCopia, fechaDevolucion, multa, copiaDanada);
     }
+
+    @Override
+    public int renovarPrestamo(int idPrestamo, LocalDate nuevaFechaLimite) {
+        return prestamoRepository.renovarPrestamo(idPrestamo, nuevaFechaLimite);
+    }
 }

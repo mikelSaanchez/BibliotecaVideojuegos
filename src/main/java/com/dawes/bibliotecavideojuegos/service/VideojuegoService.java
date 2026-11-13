@@ -52,4 +52,9 @@ public class VideojuegoService {
             throw new ReglaNegocioExcepcion("No se ha podido insertar el videojuego por un error inesperado. Inténtalo de nuevo.");
         }
     }
+
+    public ArrayList<VideojuegoDTO> VideoJuegosMasPrestados() {
+        return videojuegoDAO.VideoJuegosMasPrestados();
+    }
+
 }

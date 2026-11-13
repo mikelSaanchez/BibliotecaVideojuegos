@@ -37,9 +37,18 @@ public class PrestamoController {
         model.addAttribute("sociosActivos", prestamoService.obtenerSociosActivos());
         model.addAttribute("copiasDisponibles", prestamoService.obtenerCopiasDisponibles());
 
-        LocalDate fechaLimite = prestamoService.registrarPrestamo(idSocio, idCopia);
-        model.addAttribute("mensaje", "Préstamo registrado correctamente. Fecha límite: " + fechaLimite + ".");
+        if (idSocio == null || idCopia == null) {
+            model.addAttribute("error", "Debes seleccionar un socio y una copia.");
+            return "prestamos/registrar";
+        }
 
+        try {
+            LocalDate fechaLimite = prestamoService.registrarPrestamo(idSocio, idCopia);
+            model.addAttribute("mensaje", "Préstamo registrado correctamente. Fecha límite: " + fechaLimite + ".");
+            model.addAttribute("copiasDisponibles", prestamoService.obtenerCopiasDisponibles());
+        } catch (ReglaNegocioExcepcion e) {
+            model.addAttribute("error", e.getMessage());
+        }
 
         return "prestamos/registrar";
     }
@@ -51,12 +60,21 @@ public class PrestamoController {
     }
 
     @PostMapping("/listadoPrestamos")
-    public String buscarPrestamos(@RequestParam(required = false) String socio,
+    public String buscarPrestamos(@RequestParam int idPrestamo,
+                                  @RequestParam(required = false) String socio,
                                   @RequestParam(required = false) String titulo,
                                   @RequestParam(defaultValue = "TODOS") String estado,
                                   @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaDesde,
                                   Model model) {
         cargarListado(model, socio, titulo, estado, fechaDesde);
+        try {
+            LocalDate nuevaFechaLimite = prestamoService.renovarPrestamo(idPrestamo);
+            model.addAttribute("mensaje", "Préstamo renovado correctamente. Nueva fecha límite: " + nuevaFechaLimite + ".");
+        } catch (ReglaNegocioExcepcion e) {
+            model.addAttribute("error", e.getMessage());
+        }
+        model.addAttribute("listaPrestamos", prestamoService.listarPrestamosAbiertos(socio));
+        model.addAttribute("socioFiltro", socio);
         return "prestamos/listado";
     }
 
