@@ -1,6 +1,7 @@
 package com.dawes.bibliotecavideojuegos.repository;
 
 import com.dawes.bibliotecavideojuegos.DTO.DesplegableDTO;
+import com.dawes.bibliotecavideojuegos.excepcion.AccesoDatosException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -47,5 +48,18 @@ public class DesarrolladoraRepository {
             }
         }
         return listaDesarrolladora;
+    }
+    public boolean existeDesarrolladora(int id) {
+        String sql = "SELECT COUNT(*) FROM desarrolladoras WHERE id = ?";
+        try (Connection con = dataSource.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() && rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            logger.error("Error al comprobar la existencia del id {}", id, e);
+            throw new AccesoDatosException("Error al comprobar la existencia de un registro", e);
+        }
     }
 }

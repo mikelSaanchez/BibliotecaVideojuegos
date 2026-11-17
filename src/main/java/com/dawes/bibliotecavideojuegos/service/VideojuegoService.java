@@ -55,6 +55,37 @@ public class VideojuegoService {
         }
     }
 
+    public VideojuegoDTO insertarVideojuegoRest(VideojuegoDTO videojuego) {
+
+        if (videojuegoDAO.obtenerVideojuegoPorId(videojuego.getId()) != null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe un videojuego con id "+videojuego.getId());
+        }
+
+        if (videojuego.getTitulo() == null || videojuego.getTitulo().isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"El título del videojuego es obligatorio.");
+        }
+        if (videojuego.getAnio_lanzamiento() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"El año de lanzamiento del videojuego es obligatorio.");
+        }
+        if (videojuego.getAnio_lanzamiento() < 1970 || videojuego.getAnio_lanzamiento() > LocalDate.now().getYear()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"El año de lanzamiento debe estar entre 1970 y el año actual.");
+        }
+        if (!edadesPEGI.contains(videojuego.getPegi())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"El PEGI debe ser 3, 7, 12, 16 o 18.");
+        }
+
+        if (!desarrolladoraDAO.existeDesarrolladora(videojuego.getId_desarrolladora())) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"No existe la desarrolladora con id " + videojuego.getId_desarrolladora());
+        }
+
+        int filasAfectadas = videojuegoDAO.insertarVideojuego(videojuego);
+
+        if (filasAfectadas != 1) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "No se pudo insertar el videojuego");
+        }
+        return videojuegoDAO.obtenerVideojuegoPorId(videojuego.getId());
+    }
+
     public ArrayList<VideojuegoDTO> VideoJuegosMasPrestados() {
         return videojuegoDAO.VideoJuegosMasPrestados();
     }

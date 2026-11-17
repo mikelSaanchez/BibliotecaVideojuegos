@@ -18,4 +18,8 @@ public class DesarrolladoraDAO implements IDesarrolladoraDAO {
     public ArrayList<DesplegableDTO> listarParaDesplegable() {
         return desarrolladoraRepository.listarParaDesplegable();
     }
+    @Override
+    public boolean existeDesarrolladora(int id) {
+        return desarrolladoraRepository.existeDesarrolladora(id);
+    }
 }

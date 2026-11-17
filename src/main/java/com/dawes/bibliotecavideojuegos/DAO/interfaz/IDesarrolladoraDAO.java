@@ -6,4 +6,5 @@ import java.util.ArrayList;
 
 public interface IDesarrolladoraDAO {
     ArrayList<DesplegableDTO> listarParaDesplegable();
+    boolean existeDesarrolladora(int id);
 }

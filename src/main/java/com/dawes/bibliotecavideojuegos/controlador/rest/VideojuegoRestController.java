@@ -35,4 +35,11 @@ public class VideojuegoRestController {
         return new ResponseEntity<>(videojuegoService.buscarVideojuegoPorID(id), HttpStatus.OK);
     }
 
+    @PostMapping("/videojuegos")
+    public ResponseEntity<VideojuegoDTO> insertarVideojuego(@RequestBody VideojuegoDTO videojuego){
+        VideojuegoDTO videojuegoInsertado = videojuegoService.insertarVideojuegoRest(videojuego);
+        return new ResponseEntity<>(videojuegoInsertado, HttpStatus.CREATED);
+    }
+
+
 }
