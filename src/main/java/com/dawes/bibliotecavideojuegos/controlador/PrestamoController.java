@@ -59,8 +59,18 @@ public class PrestamoController {
         return "prestamos/listado";
     }
 
-    @PostMapping("/listadoPrestamos")
-    public String buscarPrestamos(@RequestParam int idPrestamo,
+    @PostMapping("/buscarPrestamos")
+    public String buscarPrestamos(@RequestParam(required = false) String socio,
+                                  @RequestParam(required = false) String titulo,
+                                  @RequestParam(defaultValue = "TODOS") String estado,
+                                  @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaDesde,
+                                  Model model) {
+        cargarListado(model, socio, titulo, estado, fechaDesde);
+        return "prestamos/listado";
+    }
+
+    @PostMapping("/renovarPrestamo")
+    public String renovarPrestamo(@RequestParam int idPrestamo,
                                   @RequestParam(required = false) String socio,
                                   @RequestParam(required = false) String titulo,
                                   @RequestParam(defaultValue = "TODOS") String estado,
@@ -73,8 +83,7 @@ public class PrestamoController {
         } catch (ReglaNegocioExcepcion e) {
             model.addAttribute("error", e.getMessage());
         }
-        model.addAttribute("listaPrestamos", prestamoService.listarPrestamosAbiertos(socio));
-        model.addAttribute("socioFiltro", socio);
+        cargarListado(model, socio, titulo, estado, fechaDesde);
         return "prestamos/listado";
     }
 

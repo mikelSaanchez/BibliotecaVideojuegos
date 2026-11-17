@@ -8,7 +8,7 @@
 </head>
 <body>
 <div th:replace="~{fragmentos/menu :: menu}"></div>
-<h1>Insertar Videojuegos</h1>
+<div th:replace="~{fragmentos/cabecera :: cabecera('Insertar videojuego')}"></div>
 
 <div class="container">
     <div class="form">
@@ -16,24 +16,24 @@
               th:object="${videojuego}" method="post" id="formulario">
 
             <label for="titulo">Titulo</label>
-            <input type="text" id="titulo" th:field="*{titulo}">
+            <input type="text" id="titulo" th:field="*{titulo}" required>
 
             <label for="anio_lanzamiento">Año desde: </label>
-            <input type="text" id="anio_lanzamiento"  th:field="*{anio_lanzamiento}">
+            <input type="number" id="anio_lanzamiento" th:field="*{anio_lanzamiento}" min="1970" th:attr="max=${T(java.time.LocalDate).now().year}" required>
 
             <label for="pegi">PEGI maximo</label>
             <select id="pegi" th:field="*{pegi}">
-                <option value="">Cualquiera</option>
+                <option value="">Selecciona PEGI</option>
                 <option value="3">3</option>
                 <option value="7">7</option>
-                <option value="3">12</option>
-                <option value="7">16</option>
-                <option value="3">18</option>
+                <option value="12">12</option>
+                <option value="16">16</option>
+                <option value="18">18</option>
             </select>
 
             <label for="id_desarrolladora">Desarrolladora</label>
             <select id="id_desarrolladora" th:field="*{id_desarrolladora}">
-                <option value="">Todas</option>
+                <option value="">Selecciona desarrolladora</option>
                 <option th:each="desarrolladora : ${desplegableDesarrolladora}"
                         th:value="${desarrolladora.id}"
                         th:text="${desarrolladora.nombre}" ></option>

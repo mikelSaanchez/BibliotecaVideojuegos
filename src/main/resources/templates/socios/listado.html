@@ -10,7 +10,7 @@
 <body>
 
 <div th:replace="~{fragmentos/menu :: menu}"></div>
-<h1>Listado de Socios</h1>
+<div th:replace="~{fragmentos/cabecera :: cabecera('Listado de socios')}"></div>
 <div class="container">
     <div class="form">
         <form th:action="@{/socios/listadoSocios}" method="post">

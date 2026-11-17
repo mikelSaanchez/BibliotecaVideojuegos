@@ -8,7 +8,7 @@
 </head>
 <body>
 <div th:replace="~{fragmentos/menu :: menu}"></div>
-<h1>Registrar préstamo</h1>
+<div th:replace="~{fragmentos/cabecera :: cabecera('Registrar préstamo')}"></div>
 <div class="container">
     <div class="form">
         <form th:action="@{/prestamos/registrarPrestamo}" method="post">

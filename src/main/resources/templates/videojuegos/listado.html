@@ -1,74 +1,71 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <link rel="stylesheet" type="text/css" th:href="@{/css/index.css}">
-  <link rel="stylesheet" type="text/css" th:href="@{/css/formularios.css}">
-  <link rel="stylesheet" type="text/css" th:href="@{/css/tablas.css}">
-  <meta charset="UTF-8">
-  <title>Listado de videojuegos</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/index.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/formularios.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/tablas.css}">
+    <meta charset="UTF-8">
+    <title>Listado de videojuegos</title>
 </head>
 
 <body>
 
 <div th:replace="~{fragmentos/menu :: menu}"></div>
-<h1>Listado de Videojuegos</h1>
+<div th:replace="~{fragmentos/cabecera :: cabecera('Listado de videojuegos')}"></div>
 <div class="container">
-  <div class="form">
-    <form th:action="@{/videojuegos/listadoVideojuegos}" method="post">
-      <label for="titulo">Titulo</label>
-      <input type="text" id="titulo" name="titulo">
-      <label for="id_desarrolladora">Desarrolladora</label>
-      <select id="id_desarrolladora" name="id_desarrolladora">
-        <option value="">Todas</option>
-        <option th:each="desarrolladora : ${desplegableDesarrolladora}"
-                th:value="${desarrolladora.id}"
-                th:text="${desarrolladora.nombre}" ></option>
-      </select>
+    <div class="form">
+        <form th:action="@{/videojuegos/listadoVideojuegos}" method="post">
+            <label for="titulo">Titulo</label>
+            <input type="text" id="titulo" name="titulo" th:value="${tituloFiltro}">
+            <label for="id_desarrolladora">Desarrolladora</label>
+            <select id="id_desarrolladora" name="id_desarrolladora">
+                <option value="">Todas</option>
+                <option th:each="desarrolladora : ${desplegableDesarrolladora}"
+                        th:value="${desarrolladora.id}"
+                        th:selected="${desarrolladora.id == desarrolladoraFiltro}"
+                        th:text="${desarrolladora.nombre}" ></option>
+            </select>
 
-      <label for="anio_lanzamiento">Año desde: </label>
-      <input type="text" id="anio_lanzamiento" name="anio_lanzamiento">
+            <label for="anio_lanzamiento">Año desde: </label>
+            <input type="number" id="anio_lanzamiento" name="anio_lanzamiento" th:value="${anioFiltro}">
 
-      <label for="pegi">PEGI maximo</label>
-      <select id="pegi" name="pegi">
-        <option value="">Cualquiera</option>
-        <option value="3">3</option>
-        <option value="7">7</option>
-        <option value="3">12</option>
-        <option value="7">16</option>
-        <option value="3">18</option>
-      </select>
+            <label for="pegi">PEGI maximo</label>
+            <select id="pegi" name="pegi">
+                <option value="">Cualquiera</option>
+                <option value="3" th:selected="${pegiFiltro == 3}">3</option>
+                <option value="7" th:selected="${pegiFiltro == 7}">7</option>
+                <option value="12" th:selected="${pegiFiltro == 12}">12</option>
+                <option value="16" th:selected="${pegiFiltro == 16}">16</option>
+                <option value="18" th:selected="${pegiFiltro == 18}">18</option>
+            </select>
 
-      <label for="activo">Solo con copias disponibles:</label>
-      <select id="activo" name="activo">
-        <option value="">Todos</option>
-        <option value="true">Sí</option>
-        <option value="false">No</option>
-      </select>
+            <label for="soloDisponibles">Solo con copias disponibles:</label>
+            <input type="checkbox" id="soloDisponibles" name="soloDisponibles" value="true" th:checked="${soloDisponiblesFiltro}">
 
-      <input type="submit" value="Buscar">
-    </form>
-  </div>
+            <input type="submit" value="Buscar">
+        </form>
+    </div>
 </div>
 <h2 th:if="${listaVideoJuegos == null or listaVideoJuegos.isEmpty()}">No hay videojuegos que cumplan esos criterios</h2>
 <table th:if="${listaVideoJuegos != null and !listaVideoJuegos.isEmpty()}">
-  <tr>
-    <th>ID</th>
-    <th>Titulo</th>
-    <th>Desarrolladora</th>
-    <th>Año</th>
-    <th>PEGI</th>
-    <th>Copias</th>
-    <th>Disponibles</th>
-  </tr>
-  <tr th:each="videojuego : ${listaVideoJuegos}">
-    <td th:text="${videojuego.id}"></td>
-    <td th:text="${videojuego.titulo}"></td>
-    <td th:text="${videojuego.desarrolladora}"></td>
-    <td th:text="${videojuego.anio_lanzamiento}"></td>
-    <td th:text="${videojuego.pegi}"></td>
-    <td th:text="${videojuego.copiasTotales}"></td>
-    <td th:text="${videojuego.copiasDisponibles}"></td>
-  </tr>
+    <tr>
+        <th>ID</th>
+        <th>Titulo</th>
+        <th>Desarrolladora</th>
+        <th>Año</th>
+        <th>PEGI</th>
+        <th>Copias</th>
+        <th>Disponibles</th>
+    </tr>
+    <tr th:each="videojuego : ${listaVideoJuegos}">
+        <td th:text="${videojuego.id}"></td>
+        <td th:text="${videojuego.titulo}"></td>
+        <td th:text="${videojuego.desarrolladora}"></td>
+        <td th:text="${videojuego.anio_lanzamiento}"></td>
+        <td th:text="${videojuego.pegi}"></td>
+        <td th:text="${videojuego.copiasTotales}"></td>
+        <td th:text="${videojuego.copiasDisponibles}"></td>
+    </tr>
 </table>
 </body>
 </html>

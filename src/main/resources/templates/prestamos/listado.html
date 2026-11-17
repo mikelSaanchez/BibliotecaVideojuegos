@@ -9,10 +9,10 @@
 </head>
 <body>
 <div th:replace="~{fragmentos/menu :: menu}"></div>
-<h1>Listado de préstamos</h1>
+<div th:replace="~{fragmentos/cabecera :: cabecera('Listado de préstamos')}"></div>
 <div class="container">
     <div class="form">
-        <form th:action="@{/prestamos/listadoPrestamos}" method="post">
+        <form th:action="@{/prestamos/buscarPrestamos}" method="post">
             <label for="socio">Socio</label>
             <input type="text" id="socio" name="socio" th:value="${socioFiltro}">
             <label for="titulo">Videojuego</label>
@@ -45,6 +45,7 @@
         <th>Estado</th>
         <th>Días retraso</th>
         <th>Renovaciones</th>
+        <th>Acciones</th>
     </tr>
     <tr th:each="prestamo : ${listaPrestamos}">
         <td th:text="${prestamo.socio}"></td>
@@ -58,10 +59,14 @@
         <td><span class="estado" th:classappend="${'estado-' + prestamo.estadoCalculado}"
                   th:text="${#strings.replace(prestamo.estadoCalculado, '_', ' ')}"></span></td>
         <td th:text="${prestamo.diasRetraso > 0 ? prestamo.diasRetraso + ' días' : '-'}"></td>
+        <td th:text="${prestamo.renovaciones}"></td>
         <td>
-            <form th:if="${!prestamo.estadoCalculado.equalsIgnoreCase('DEVUELTO')}" th:action="@{/prestamos/listadoPrestamos}" method="post">
+            <form th:if="${!prestamo.estadoCalculado.equalsIgnoreCase('DEVUELTO')}" th:action="@{/prestamos/renovarPrestamo}" method="post">
                 <input type="hidden" name="idPrestamo" th:value="${prestamo.id}">
                 <input type="hidden" name="socio" th:value="${socioFiltro}">
+                <input type="hidden" name="titulo" th:value="${tituloFiltro}">
+                <input type="hidden" name="estado" th:value="${estadoFiltro}">
+                <input type="hidden" name="fechaDesde" th:value="${fechaDesdeFiltro}">
                 <input type="submit" value="Renovar">
             </form>
         </td>

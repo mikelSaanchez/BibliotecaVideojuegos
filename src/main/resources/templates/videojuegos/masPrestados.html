@@ -11,7 +11,9 @@
 <body>
 
 <div th:replace="~{fragmentos/menu :: menu}"></div>
-<h1>Listado de Videojuegos mas Prestados</h1>
+<div th:replace="~{fragmentos/cabecera :: cabecera('Videojuegos más prestados')}"></div>
+<div th:replace="~{fragmentos/mensajes :: mensajes}"></div>
+<h2 th:if="${listaVideoJuegos == null or listaVideoJuegos.isEmpty()}">Todavía no hay préstamos registrados.</h2>
 
 <div class="container">
     <table th:if="${listaVideoJuegos != null and !listaVideoJuegos.isEmpty()}">

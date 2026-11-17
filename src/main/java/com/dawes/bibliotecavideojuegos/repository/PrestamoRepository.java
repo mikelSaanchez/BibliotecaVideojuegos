@@ -177,7 +177,7 @@ public class PrestamoRepository {
     }
 
     public ArrayList<PrestamoDTO> listarPrestamos(String socio, String titulo, LocalDate fechaDesde, boolean soloAbiertos) {
-        StringBuilder sql = new StringBuilder("SELECT p.id, p.id_socio, p.id_copia, p.fecha_prestamo, p.fecha_limite, p.fecha_devolucion, p.multa, " + "CONCAT(s.nombre, ' ', s.apellidos) AS socio, v.titulo, pl.nombre AS plataforma, c.codigo_inventario " + "FROM prestamos p JOIN socios s ON s.id = p.id_socio JOIN copias c ON c.id = p.id_copia " + "JOIN videojuegos v ON v.id = c.id_videojuego JOIN plataformas pl ON pl.id = c.id_plataforma WHERE 1 = 1");
+        StringBuilder sql = new StringBuilder("SELECT p.id, p.id_socio, p.id_copia, p.fecha_prestamo, p.fecha_limite, p.fecha_devolucion, p.multa, p.renovaciones, " + "CONCAT(s.nombre, ' ', s.apellidos) AS socio, v.titulo, pl.nombre AS plataforma, c.codigo_inventario " + "FROM prestamos p JOIN socios s ON s.id = p.id_socio JOIN copias c ON c.id = p.id_copia " + "JOIN videojuegos v ON v.id = c.id_videojuego JOIN plataformas pl ON pl.id = c.id_plataforma WHERE 1 = 1");
 
         ArrayList<Object> parametros = new ArrayList<>();
 
@@ -259,7 +259,7 @@ public class PrestamoRepository {
         }
     }
     public int renovarPrestamo(int idPrestamo, LocalDate nuevaFechaLimite) {
-        String sql = "UPDATE prestamos SET fecha_limite = ?, renovaciones = renovaciones + 1 WHERE id = ? AND fecha_devolucion IS NULL";
+        String sql = "UPDATE prestamos SET fecha_limite = ?, renovaciones = renovaciones + 1 WHERE id = ? AND fecha_devolucion IS NULL AND renovaciones = 0 AND fecha_limite >= CURDATE()";
         Connection connection = null;
         int filasAfectadas = 0;
         try {
@@ -291,6 +291,7 @@ public class PrestamoRepository {
             prestamo.setFechaDevolucion(fechaDevolucion.toLocalDate());
         }
         prestamo.setMulta(rs.getBigDecimal("multa"));
+        prestamo.setRenovaciones(rs.getInt("renovaciones"));
         prestamo.setSocio(rs.getString("socio"));
         prestamo.setTitulo(rs.getString("titulo"));
         prestamo.setPlataforma(rs.getString("plataforma"));
@@ -318,5 +319,3 @@ public class PrestamoRepository {
         }
     }
 }
-
-

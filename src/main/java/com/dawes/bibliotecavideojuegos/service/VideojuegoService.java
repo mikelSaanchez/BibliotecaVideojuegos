@@ -33,17 +33,17 @@ public class VideojuegoService {
     public void insertarVideojuego(VideojuegoDTO videojuego) {
 
         if (videojuego.getTitulo() == null || videojuego.getTitulo().isBlank()) {
-            throw new ReglaNegocioExcepcion("El nombre del videojuego es obligatorio.");
+            throw new ReglaNegocioExcepcion("El título del videojuego es obligatorio.");
         }
         if (videojuego.getAnio_lanzamiento() == null) {
-            throw new ReglaNegocioExcepcion("El anio de lanzamiento del videojuego es obligatorio.");
+            throw new ReglaNegocioExcepcion("El año de lanzamiento del videojuego es obligatorio.");
         }
         if (videojuego.getAnio_lanzamiento() < 1970 || videojuego.getAnio_lanzamiento() > LocalDate.now().getYear()) {
-            throw new ReglaNegocioExcepcion("El anio de lanzamiento del videojuego tiene que estar entre los valores solicitados.");
+            throw new ReglaNegocioExcepcion("El año de lanzamiento debe estar entre 1970 y el año actual.");
         }
 
         if (!edadesPEGI.contains(videojuego.getPegi())) {
-            throw new ReglaNegocioExcepcion("El PEGI tiene que ser uno de los valores de las variables.");
+            throw new ReglaNegocioExcepcion("El PEGI debe ser 3, 7, 12, 16 o 18.");
         }
 
         int filasAfectadas = videojuegoDAO.insertarVideojuego(videojuego);

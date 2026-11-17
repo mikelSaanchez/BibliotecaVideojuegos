@@ -9,7 +9,7 @@
 
 <div th:replace=" ~{fragmentos/menu :: menu} "></div>
 
-<h1>GameVault · Biblioteca de Videojuegos</h1>
+<div th:replace="~{fragmentos/cabecera :: cabecera('GameVault · Biblioteca de videojuegos')}"></div>
 <div class="contadores" th:object="${listarInicio}">
     <div class="contador">
         <span th:text = "*{videojuegos}">0</span>

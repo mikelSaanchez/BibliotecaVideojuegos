@@ -42,9 +42,8 @@ public class VideojuegoRepository {
             sql.append(" AND pegi <= ?");
             parametros.add(pegi);
         }
-        if (copias_disponibles != null) {
-            sql.append(" AND copias_disponibles = ?");
-            parametros.add(copias_disponibles);
+        if (Boolean.TRUE.equals(copias_disponibles)) {
+            sql.append(" AND copias_disponibles > 0");
         }
         ArrayList<VideojuegoDTO> listaVideojuego = new ArrayList<>();
         Connection connection = null;
@@ -94,7 +93,7 @@ public class VideojuegoRepository {
                 "on v.id = c.id_videojuego\n" +
                 "join prestamos p\n" +
                 "on c.id = p.id_copia\n" +
-                "group by v.id \n" +
+                "group by v.id, v.titulo \n" +
                 "order by prestamosTotales DESC, v.titulo ASC\n" +
                 "limit 5;");
 
@@ -146,3 +145,4 @@ public class VideojuegoRepository {
         }
     }
 }
+

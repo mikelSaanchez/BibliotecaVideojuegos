@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.time.Period;
 import java.util.ArrayList;
 
 @Service
@@ -42,7 +43,7 @@ public class PrestamoService {
 
         CopiaDTO copia = prestamoDAO.obtenerCopia(idCopia);
 
-        if (copia == null) {
+        if (copia == null || !prestamoDAO.copiaDisponible(idCopia)) {
             throw new ReglaNegocioExcepcion("RN-2: La copia seleccionada no existe o no está disponible.");
         }
 
@@ -50,10 +51,14 @@ public class PrestamoService {
             throw new ReglaNegocioExcepcion("RN-3: Un socio no puede tener más de 3 préstamos abiertos a la vez.");
         }
 
-        int edadSocio = ((socio.getFecha_nacimiento()).getYear() - LocalDate.now().getYear());
+        int edadSocio = Period.between(socio.getFecha_nacimiento(), hoy).getYears();
 
-        if (edadSocio > copia.getPegi()) {
-            throw new ReglaNegocioExcepcion("RN-4: La edad del socio debe ser mayor o igual que el PEGI del videojuego ");
+        if (edadSocio < copia.getPegi()) {
+            throw new ReglaNegocioExcepcion("RN-4: El socio no tiene la edad mínima del PEGI del videojuego.");
+        }
+
+        if (prestamoDAO.tienePrestamoVencido(idSocio, hoy)) {
+            throw new ReglaNegocioExcepcion("RN-5: El socio tiene un préstamo vencido sin devolver.");
         }
 
         int anioActual = LocalDate.now().getYear();
@@ -152,12 +157,16 @@ public class PrestamoService {
             }
         }
 
+        if (prestamo == null) {
+            throw new ReglaNegocioExcepcion("No se puede renovar el préstamo porque no existe o ya está devuelto.");
+        }
+
         if (prestamo.getFechaLimite().isBefore(LocalDate.now())) {
-            throw new ReglaNegocioExcepcion("RN-RE1. No se puede renovar un préstamo vencido.");
+            throw new ReglaNegocioExcepcion("RN-RE1: No se puede renovar el préstamo " + idPrestamo + ": venció el " + prestamo.getFechaLimite() + ".");
         }
 
         if (prestamo.getRenovaciones() >= 1) {
-            throw new ReglaNegocioExcepcion("RN-RE2. Como máximo se puede renovar una vez cada préstamo.");
+            throw new ReglaNegocioExcepcion("RN-RE2: El préstamo " + idPrestamo + " ya se ha renovado una vez.");
         }
 
         LocalDate nuevaFechaLimite = prestamo.getFechaLimite().plusDays(7);

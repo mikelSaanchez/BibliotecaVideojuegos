@@ -20,6 +20,7 @@ public class VideojuegoController {
     public String listadoVideojuegos(Model model) {
         model.addAttribute("listaVideoJuegos", videojuegoService.filtrarVideojuego(null, null, null, null, null));
         model.addAttribute("desplegableDesarrolladora", videojuegoService.obtenerDesplegableDesarrolladoras());
+        prepararFiltros(model, null, null, null, null, false);
         return "videojuegos/listado";
     }
 
@@ -28,11 +29,20 @@ public class VideojuegoController {
                                     @RequestParam(required = false) Integer id_desarrolladora,
                                     @RequestParam(required = false) Integer anio_lanzamiento,
                                     @RequestParam(required = false) Integer pegi,
-                                    @RequestParam(required = false) Boolean activo,
+                                    @RequestParam(defaultValue = "false") Boolean soloDisponibles,
                                     Model model) {
-        model.addAttribute("listaVideoJuegos", videojuegoService.filtrarVideojuego(titulo, id_desarrolladora, anio_lanzamiento, pegi, activo));
+        model.addAttribute("listaVideoJuegos", videojuegoService.filtrarVideojuego(titulo, id_desarrolladora, anio_lanzamiento, pegi, soloDisponibles));
         model.addAttribute("desplegableDesarrolladora", videojuegoService.obtenerDesplegableDesarrolladoras());
+        prepararFiltros(model, titulo, id_desarrolladora, anio_lanzamiento, pegi, soloDisponibles);
         return "videojuegos/listado";
+    }
+
+    private void prepararFiltros(Model model, String titulo, Integer desarrolladora, Integer anio, Integer pegi, Boolean soloDisponibles) {
+        model.addAttribute("tituloFiltro", titulo);
+        model.addAttribute("desarrolladoraFiltro", desarrolladora);
+        model.addAttribute("anioFiltro", anio);
+        model.addAttribute("pegiFiltro", pegi);
+        model.addAttribute("soloDisponiblesFiltro", Boolean.TRUE.equals(soloDisponibles));
     }
 
     @GetMapping("/insertarVideojuego")
@@ -54,7 +64,7 @@ public class VideojuegoController {
         } catch (ReglaNegocioExcepcion e) {
             model.addAttribute("error", e.getMessage());
         }
-        model.addAttribute("desplegableDesarrolladoras", videojuegoService.obtenerDesplegableDesarrolladoras());
+        model.addAttribute("desplegableDesarrolladora", videojuegoService.obtenerDesplegableDesarrolladoras());
         return "videojuegos/insertar";
     }
 
@@ -66,4 +76,6 @@ public class VideojuegoController {
     }
 
 }
+
+
 

@@ -28,9 +28,12 @@ public class SocioRepository {
 
         ArrayList<Object> parametros = new ArrayList<>();
 
-        if ((nombre != null && !nombre.isBlank()) || (apellidos != null && !apellidos.isBlank())) {
-            sql.append(" AND nombre LIKE ? AND apellidos like ?");
+        if (nombre != null && !nombre.isBlank()) {
+            sql.append(" AND nombre LIKE ?");
             parametros.add("%" + nombre + "%");
+        }
+        if (apellidos != null && !apellidos.isBlank()) {
+            sql.append(" AND apellidos LIKE ?");
             parametros.add("%" + apellidos + "%");
         }
 
@@ -116,6 +119,20 @@ public class SocioRepository {
         return null;
     }
 
+    public boolean existeEmail(String email) {
+        String sql = "SELECT COUNT(*) AS total FROM socios WHERE email = ?";
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, email);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() && rs.getInt("total") > 0;
+            }
+        } catch (SQLException e) {
+            logger.error("Error al comprobar el email {}", email, e);
+            return false;
+        }
+    }
+
     private SocioDTO mapearSocio(ResultSet rs) throws SQLException {
         return new SocioDTO(rs.getInt("id"),
                 rs.getString("nombre"),
@@ -137,4 +154,3 @@ public class SocioRepository {
         }
     }
 }
-

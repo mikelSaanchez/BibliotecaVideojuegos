@@ -38,6 +38,11 @@ public class SocioService {
         if (socio.getFecha_nacimiento().isAfter(LocalDate.now())) {
             throw new ReglaNegocioExcepcion("El año del socio no puede ser mas alto que el de la fecha de hoy.");
         }
+        if (socioDAO.existeEmail(socio.getEmail().trim())) {
+            throw new ReglaNegocioExcepcion("El email ya está registrado. Introduce otro email.");
+        }
+
+        socio.setEmail(socio.getEmail().trim());
 
         int filasAfectadas = socioDAO.insertarSocio(socio);
 

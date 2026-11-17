@@ -19,8 +19,9 @@ public class SocioDAO implements ISocioDAO {
     public ArrayList<SocioDTO> filtarSocio(String nombre, String apellido, String coreo, Integer activo) {
         return socioRepository.filtarSocio(nombre, apellido, coreo, activo);
     }
+
     @Override
-    public int insertarSocio(SocioDTO socio){
+    public int insertarSocio(SocioDTO socio) {
         return socioRepository.insertar(socio);
     }
 
@@ -29,5 +30,9 @@ public class SocioDAO implements ISocioDAO {
         return socioRepository.obtenerSocioPorId(id);
     }
 
-
+    @Override
+    public boolean existeEmail(String email) {
+        return socioRepository.existeEmail(email);
+    }
 }
+
