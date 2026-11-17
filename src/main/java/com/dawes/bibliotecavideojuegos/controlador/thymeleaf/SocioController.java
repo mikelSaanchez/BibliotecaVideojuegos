@@ -1,4 +1,4 @@
-package com.dawes.bibliotecavideojuegos.controlador;
+package com.dawes.bibliotecavideojuegos.controlador.thymeleaf;
 
 import com.dawes.bibliotecavideojuegos.DTO.SocioDTO;
 import com.dawes.bibliotecavideojuegos.excepcion.ReglaNegocioExcepcion;

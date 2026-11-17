@@ -26,4 +26,8 @@ private final VideojuegoRepository videojuegoRepository;
     public ArrayList<VideojuegoDTO> VideoJuegosMasPrestados() {
         return videojuegoRepository.VideoJuegosMasPrestados();
     }
+    @Override
+    public VideojuegoDTO obtenerVideojuegoPorId(Integer id) {
+        return videojuegoRepository.obtenerVideojuegoPorId(id);
+    }
 }

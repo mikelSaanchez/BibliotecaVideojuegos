@@ -5,7 +5,9 @@ import com.dawes.bibliotecavideojuegos.DAO.interfaz.IVideojuegoDAO;
 import com.dawes.bibliotecavideojuegos.DTO.DesplegableDTO;
 import com.dawes.bibliotecavideojuegos.DTO.VideojuegoDTO;
 import com.dawes.bibliotecavideojuegos.excepcion.ReglaNegocioExcepcion;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -56,5 +58,14 @@ public class VideojuegoService {
     public ArrayList<VideojuegoDTO> VideoJuegosMasPrestados() {
         return videojuegoDAO.VideoJuegosMasPrestados();
     }
+
+    public VideojuegoDTO buscarVideojuegoPorID(Integer id) {
+        VideojuegoDTO videojuego = videojuegoDAO.obtenerVideojuegoPorId(id);
+        if (videojuego == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe el videojuego con ID: " + id);
+        }
+        return videojuego;
+    }
+
 
 }

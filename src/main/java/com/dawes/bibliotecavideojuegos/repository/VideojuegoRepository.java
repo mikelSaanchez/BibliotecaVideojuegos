@@ -115,6 +115,25 @@ public class VideojuegoRepository {
         }
         return listaVideojuego;
     }
+    public VideojuegoDTO obtenerVideojuegoPorId(Integer id) {
+        String sql = "select * from v_videojuegos_detalle where id = ?;";
+        VideojuegoDTO videojuego = null;
+        Connection connection = null;
+        try {
+            connection = dataSource.getConnection();
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                videojuego = mapearVideojuego(rs);
+            }
+            connection.close();
+        } catch (SQLException e) {
+            logger.error("Error al obtener alumno por {}", id, e);
+            cerrarConexion(connection);
+        }
+        return videojuego;
+    }
 
     private VideojuegoDTO mapearVideojuego(ResultSet rs) throws SQLException {
         return new VideojuegoDTO(
