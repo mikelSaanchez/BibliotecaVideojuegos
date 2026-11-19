@@ -1,15 +1,13 @@
 package com.dawes.bibliotecavideojuegos.repository;
 
 import com.dawes.bibliotecavideojuegos.DTO.SocioDTO;
+import com.dawes.bibliotecavideojuegos.excepcion.AccesoDatosException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 @Repository
@@ -22,9 +20,7 @@ public class SocioRepository {
     }
 
     public ArrayList<SocioDTO> filtarSocio(String nombre, String apellidos, String email, Integer activo) {
-        StringBuilder sql = new StringBuilder("select s.id,s.nombre,s.apellidos, s.email, s.activo,s.fecha_alta,s.activo,TIMESTAMPDIFF(YEAR, s.fecha_nacimiento, CURDATE()) AS edad,\n" +
-                "(select count(*) from prestamos p where p.id_socio = s.id AND p.fecha_devolucion IS NULL) as prestamosAbiertos \n " +
-                "from socios s WHERE 1 = 1");
+        StringBuilder sql = new StringBuilder("select s.id,s.nombre,s.apellidos, s.email, s.activo,s.fecha_alta,s.activo,TIMESTAMPDIFF(YEAR, s.fecha_nacimiento, CURDATE()) AS edad,\n" + "(select count(*) from prestamos p where p.id_socio = s.id AND p.fecha_devolucion IS NULL) as prestamosAbiertos \n " + "from socios s WHERE 1 = 1");
 
         ArrayList<Object> parametros = new ArrayList<>();
 
@@ -121,8 +117,7 @@ public class SocioRepository {
 
     public boolean existeEmail(String email) {
         String sql = "SELECT COUNT(*) AS total FROM socios WHERE email = ?";
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (Connection connection = dataSource.getConnection(); PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, email);
             try (ResultSet rs = ps.executeQuery()) {
                 return rs.next() && rs.getInt("total") > 0;
@@ -130,6 +125,47 @@ public class SocioRepository {
         } catch (SQLException e) {
             logger.error("Error al comprobar el email {}", email, e);
             return false;
+        }
+    }
+
+    public void actualizar(SocioDTO s) {
+        String sql = "UPDATE socios SET nombre = ?, apellidos = ?, email = ?, fecha_nacimiento = ?, activo = ? WHERE id = ?";
+        try (Connection con = dataSource.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, s.getNombre());
+            ps.setString(2, s.getApellidos());
+            ps.setString(3, s.getEmail());
+            ps.setDate(4, Date.valueOf(s.getFecha_nacimiento()));
+            ps.setInt(5, s.getAlta());
+            ps.setInt(6, s.getId());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            logger.error("Error al actualizar el socio {}", s.getId(), e);
+            throw new AccesoDatosException("Error al actualizar el socio", e);
+        }
+    }
+
+    public void borrar(int id) {
+        String sql = "DELETE FROM socios WHERE id = ?";
+        try (Connection con = dataSource.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            logger.error("Error al borrar el socio {}", id, e);
+            throw new AccesoDatosException("Error al borrar el socio", e);
+        }
+    }
+
+    public int contarPrestamos(int idSocio) {
+        String sql = "SELECT COUNT(*) FROM prestamos WHERE id_socio = ?";
+        try (Connection con = dataSource.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idSocio);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? rs.getInt(1) : 0;
+            }
+        } catch (SQLException e) {
+            logger.error("Error al contar los préstamos del socio {}", idSocio, e);
+            throw new AccesoDatosException("Error al contar los préstamos", e);
         }
     }
 
@@ -141,7 +177,8 @@ public class SocioRepository {
                 rs.getInt("edad"),
                 rs.getInt("activo"),
                 rs.getInt("prestamosAbiertos"),
-                rs.getDate("fecha_alta").toLocalDate());
+                rs.getDate("fecha_alta").toLocalDate()
+        );
     }
 
     private void cerrarConexion(Connection connection) {

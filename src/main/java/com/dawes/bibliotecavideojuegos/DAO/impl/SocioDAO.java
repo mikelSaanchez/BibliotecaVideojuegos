@@ -34,5 +34,20 @@ public class SocioDAO implements ISocioDAO {
     public boolean existeEmail(String email) {
         return socioRepository.existeEmail(email);
     }
+
+    @Override
+    public void actualizar(SocioDTO socio) {
+        socioRepository.actualizar(socio);
+    }
+
+    @Override
+    public void borrar(int id) {
+        socioRepository.borrar(id);
+    }
+
+    @Override
+    public int contarPrestamos(int idSocio) {
+        return socioRepository.contarPrestamos(idSocio);
+    }
 }
 

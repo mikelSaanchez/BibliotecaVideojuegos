@@ -8,9 +8,18 @@ import java.util.ArrayList;
 public interface ISocioDAO {
 
     ArrayList<SocioDTO> filtarSocio(String nombre, String apellido, String coreo, Integer activo);
-    int insertarSocio (SocioDTO socio);
+
+    int insertarSocio(SocioDTO socio);
+
     SocioDTO obtenerSocioPorId(int id);
+
     boolean existeEmail(String email);
+
+    void actualizar(SocioDTO socio);
+
+    void borrar(int id);
+
+    int contarPrestamos(int idSocio);
 
 }
 
