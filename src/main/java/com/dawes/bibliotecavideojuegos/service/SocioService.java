@@ -53,6 +53,34 @@ public class SocioService {
         }
     }
 
+    public SocioDTO insertarSocioRest(SocioDTO socio) {
+
+        if (socio.getNombre() == null || socio.getNombre().isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"El nombre del socio es obligatorio.");
+        }
+        if (socio.getApellidos() == null || socio.getApellidos().isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"El apellido del socio es obligatorio.");
+        }
+        if (socio.getEmail() == null || socio.getEmail().isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"El email del socio es obligatorio.");
+        }
+        if (socio.getFecha_nacimiento().isAfter(LocalDate.now())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"El año del socio no puede ser mas alto que el de la fecha de hoy.");
+        }
+        if (socioDAO.existeEmail(socio.getEmail().trim())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,"El email ya está registrado. Introduce otro email.");
+        }
+
+        socio.setEmail(socio.getEmail().trim());
+
+        int filasAfectadas = socioDAO.insertarSocio(socio);
+
+        if (filasAfectadas != 1) {
+            throw new ReglaNegocioExcepcion("No se ha podido insertar el socio por un error inesperado. Inténtalo de nuevo.");
+        }
+        return socioDAO.obtenerSocioPorId(socio.getId());
+    }
+
     public SocioDTO actualizar(int id, SocioDTO socio) {
         SocioDTO actual = obtener(id); // 404 si no existe
         if (socio.getNombre() == null || socio.getNombre().isBlank()) {
@@ -95,7 +123,7 @@ public class SocioService {
     public SocioDTO obtener(int id) {
         SocioDTO socio = socioDAO.obtenerSocioPorId(id);
         if (socio == null) {
-            throw new ResponseStatusException( HttpStatus.NOT_FOUND,"No existe el socio con id " + id);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe el socio con id " + id);
         }
         return socio;
     }

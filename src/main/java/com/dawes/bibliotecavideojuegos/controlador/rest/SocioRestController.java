@@ -32,4 +32,16 @@ public class SocioRestController {
     public ResponseEntity<SocioDTO> buscarSociosPorId(@PathVariable Integer id) {
         return new ResponseEntity<>(socioService.obtener(id), HttpStatus.OK);
     }
+
+    @PostMapping("/socios")
+    public ResponseEntity<SocioDTO> insertarSocio(@RequestBody SocioDTO socio) {
+        SocioDTO socioInsertado = socioService.insertarSocioRest(socio);
+        return new ResponseEntity<>(socioInsertado, HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/socios/{id}")
+    public ResponseEntity borrarSocio(@PathVariable Integer id) {
+        socioService.borrar(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }
