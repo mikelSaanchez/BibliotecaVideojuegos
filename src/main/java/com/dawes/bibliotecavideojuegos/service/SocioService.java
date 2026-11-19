@@ -3,7 +3,9 @@ package com.dawes.bibliotecavideojuegos.service;
 import com.dawes.bibliotecavideojuegos.DAO.interfaz.ISocioDAO;
 import com.dawes.bibliotecavideojuegos.DTO.SocioDTO;
 import com.dawes.bibliotecavideojuegos.excepcion.ReglaNegocioExcepcion;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -93,7 +95,7 @@ public class SocioService {
     public SocioDTO obtener(int id) {
         SocioDTO socio = socioDAO.obtenerSocioPorId(id);
         if (socio == null) {
-            throw new ReglaNegocioExcepcion("No existe el socio con id " + id);
+            throw new ResponseStatusException( HttpStatus.NOT_FOUND,"No existe el socio con id " + id);
         }
         return socio;
     }
