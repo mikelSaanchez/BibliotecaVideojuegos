@@ -44,4 +44,12 @@ public class SocioRestController {
         socioService.borrar(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @PutMapping("/socios/{id}")
+    public ResponseEntity<SocioDTO> actualizarSocio(@RequestBody SocioDTO socio,
+                                                    @PathVariable Integer id) {
+        SocioDTO socioActualizado = socioService.actualizar(id, socio);
+
+        return new ResponseEntity<>(socioActualizado, HttpStatus.OK);
+    }
 }

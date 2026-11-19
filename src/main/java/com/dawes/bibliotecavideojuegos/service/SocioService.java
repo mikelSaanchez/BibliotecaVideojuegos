@@ -56,19 +56,19 @@ public class SocioService {
     public SocioDTO insertarSocioRest(SocioDTO socio) {
 
         if (socio.getNombre() == null || socio.getNombre().isBlank()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"El nombre del socio es obligatorio.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El nombre del socio es obligatorio.");
         }
         if (socio.getApellidos() == null || socio.getApellidos().isBlank()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"El apellido del socio es obligatorio.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El apellido del socio es obligatorio.");
         }
         if (socio.getEmail() == null || socio.getEmail().isBlank()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"El email del socio es obligatorio.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El email del socio es obligatorio.");
         }
         if (socio.getFecha_nacimiento().isAfter(LocalDate.now())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"El año del socio no puede ser mas alto que el de la fecha de hoy.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El año del socio no puede ser mas alto que el de la fecha de hoy.");
         }
         if (socioDAO.existeEmail(socio.getEmail().trim())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT,"El email ya está registrado. Introduce otro email.");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "El email ya está registrado. Introduce otro email.");
         }
 
         socio.setEmail(socio.getEmail().trim());
@@ -84,22 +84,19 @@ public class SocioService {
     public SocioDTO actualizar(int id, SocioDTO socio) {
         SocioDTO actual = obtener(id); // 404 si no existe
         if (socio.getNombre() == null || socio.getNombre().isBlank()) {
-            throw new ReglaNegocioExcepcion("El nombre del socio es obligatorio.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El nombre del socio es obligatorio.");
         }
         if (socio.getApellidos() == null || socio.getApellidos().isBlank()) {
-            throw new ReglaNegocioExcepcion("El apellido del socio es obligatorio.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El apellido del socio es obligatorio.");
         }
         if (socio.getEmail() == null || socio.getEmail().isBlank()) {
-            throw new ReglaNegocioExcepcion("El email del socio es obligatorio.");
-        }
-        if (socio.getFecha_nacimiento() == null) {
-            throw new ReglaNegocioExcepcion("El año del socio es obligatorio.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El email del socio es obligatorio.");
         }
         if (socio.getFecha_nacimiento().isAfter(LocalDate.now())) {
-            throw new ReglaNegocioExcepcion("El año del socio no puede ser mas alto que el de la fecha de hoy.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El año del socio no puede ser mas alto que el de la fecha de hoy.");
         }
         if (socioDAO.existeEmail(socio.getEmail().trim())) {
-            throw new ReglaNegocioExcepcion("El email ya está registrado. Introduce otro email.");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "El email ya está registrado. Introduce otro email.");
         }
         String email = socio.getEmail().trim();
         if (!actual.getEmail().equalsIgnoreCase(socio.getEmail()) && socioDAO.existeEmail(email)) {
@@ -115,7 +112,7 @@ public class SocioService {
         obtener(id); // 404 si no existe
         int prestamos = socioDAO.contarPrestamos(id);
         if (prestamos > 0) {
-            throw new ReglaNegocioExcepcion("No se puede borrar el socio: tiene " + prestamos + " préstamo(s) registrados. Dalo de baja en su lugar (activo = false)");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "No se puede borrar el socio: tiene " + prestamos + " préstamo(s) registrados. Dalo de baja en su lugar (activo = false)");
         }
         socioDAO.borrar(id);
     }
