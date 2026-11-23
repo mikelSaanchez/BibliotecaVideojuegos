@@ -4,10 +4,7 @@ import com.dawes.bibliotecavideojuegos.DTO.PrestamoDTO;
 import com.dawes.bibliotecavideojuegos.service.PrestamoService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -28,5 +25,10 @@ public class PrestamoRestController {
             @RequestParam(required = false) String estado,
             @RequestParam(required = false) LocalDate fechaDesde) {
         return ResponseEntity.ok(prestamoService.listarParaApi(socio, titulo, estado, fechaDesde));
+    }
+
+    @GetMapping("/prestamos/{id}")
+    public ResponseEntity<PrestamoDTO> obtenerPrestamo(@PathVariable int id) {
+        return ResponseEntity.ok(prestamoService.obtenerParaApi(id));
     }
 }

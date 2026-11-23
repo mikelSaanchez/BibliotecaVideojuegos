@@ -215,4 +215,13 @@ public class PrestamoService {
         return resultado;
     }
 
+    public PrestamoDTO obtenerParaApi(int id) {
+        for (PrestamoDTO prestamo : prestamoDAO.listarPrestamos(null, null, null, false)) {
+            if (prestamo.getId() != null && prestamo.getId() == id) {
+
+                return prestamo;
+            }
+        }
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe el préstamo con id " + id);
+    }
 }
