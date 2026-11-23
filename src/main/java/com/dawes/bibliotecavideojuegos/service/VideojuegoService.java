@@ -2,7 +2,7 @@ package com.dawes.bibliotecavideojuegos.service;
 
 import com.dawes.bibliotecavideojuegos.DAO.interfaz.IDesarrolladoraDAO;
 import com.dawes.bibliotecavideojuegos.DAO.interfaz.IVideojuegoDAO;
-import com.dawes.bibliotecavideojuegos.DTO.DesplegableDTO;
+import com.dawes.bibliotecavideojuegos.DTO.DesarrolladoraDTO;
 import com.dawes.bibliotecavideojuegos.DTO.VideojuegoDTO;
 import com.dawes.bibliotecavideojuegos.excepcion.ReglaNegocioExcepcion;
 import org.springframework.http.HttpStatus;
@@ -24,9 +24,6 @@ public class VideojuegoService {
         this.desarrolladoraDAO = desarrolladoraDAO;
     }
 
-    public ArrayList<DesplegableDTO> obtenerDesplegableDesarrolladoras() {
-        return desarrolladoraDAO.listarParaDesplegable();
-    }
 
     public ArrayList<VideojuegoDTO> filtrarVideojuego(String titulo, Integer id_desarrolladora, Integer anio_lanzamiento, Integer pegi, Boolean activo) {
         return videojuegoDAO.filtarVideojuego(titulo, id_desarrolladora, anio_lanzamiento, pegi, activo);
@@ -58,24 +55,24 @@ public class VideojuegoService {
     public VideojuegoDTO insertarVideojuegoRest(VideojuegoDTO videojuego) {
 
         if (videojuegoDAO.obtenerVideojuegoPorId(videojuego.getId()) != null) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe un videojuego con id "+videojuego.getId());
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe un videojuego con id " + videojuego.getId());
         }
 
         if (videojuego.getTitulo() == null || videojuego.getTitulo().isBlank()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"El título del videojuego es obligatorio.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El título del videojuego es obligatorio.");
         }
         if (videojuego.getAnio_lanzamiento() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"El año de lanzamiento del videojuego es obligatorio.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El año de lanzamiento del videojuego es obligatorio.");
         }
         if (videojuego.getAnio_lanzamiento() < 1970 || videojuego.getAnio_lanzamiento() > LocalDate.now().getYear()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"El año de lanzamiento debe estar entre 1970 y el año actual.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El año de lanzamiento debe estar entre 1970 y el año actual.");
         }
         if (!edadesPEGI.contains(videojuego.getPegi())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"El PEGI debe ser 3, 7, 12, 16 o 18.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El PEGI debe ser 3, 7, 12, 16 o 18.");
         }
 
-        if (!desarrolladoraDAO.existeDesarrolladora(videojuego.getId_desarrolladora())) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"No existe la desarrolladora con id " + videojuego.getId_desarrolladora());
+        if (!desarrolladoraDAO.existePorId(videojuego.getId_desarrolladora())) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe la desarrolladora con id " + videojuego.getId_desarrolladora());
         }
 
         int filasAfectadas = videojuegoDAO.insertarVideojuego(videojuego);
@@ -97,6 +94,8 @@ public class VideojuegoService {
         }
         return videojuego;
     }
-
+    public ArrayList<DesarrolladoraDTO> listarDesarrolladorasApi() {
+        return desarrolladoraDAO.listarTodas();
+    }
 
 }

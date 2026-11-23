@@ -6,7 +6,7 @@ import com.dawes.bibliotecavideojuegos.service.VideojuegoService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
+/*
 @Controller
 @RequestMapping("/videojuegos")
 public class VideojuegoController {
@@ -76,6 +76,8 @@ public class VideojuegoController {
     }
 
 }
+*/
+
 
 
 

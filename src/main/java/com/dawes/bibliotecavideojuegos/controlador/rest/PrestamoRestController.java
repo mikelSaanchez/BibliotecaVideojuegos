@@ -28,7 +28,10 @@ public class PrestamoRestController {
     }
 
     @GetMapping("/prestamos/{id}")
-    public ResponseEntity<PrestamoDTO> obtenerPrestamo(@PathVariable int id) {
+    public ResponseEntity<PrestamoDTO> obtenerPrestamoPorID(@PathVariable int id) {
         return ResponseEntity.ok(prestamoService.obtenerParaApi(id));
     }
+
+
+
 }
