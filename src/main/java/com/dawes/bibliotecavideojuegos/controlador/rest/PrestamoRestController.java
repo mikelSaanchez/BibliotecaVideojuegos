@@ -1,12 +1,12 @@
 package com.dawes.bibliotecavideojuegos.controlador.rest;
 
+import com.dawes.bibliotecavideojuegos.DTO.DevolucionSolicitudDTO;
 import com.dawes.bibliotecavideojuegos.DTO.PrestamoDTO;
 import com.dawes.bibliotecavideojuegos.DTO.PrestamoSolicitudDTO;
 import com.dawes.bibliotecavideojuegos.service.PrestamoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,6 +47,7 @@ public class PrestamoRestController {
     public ResponseEntity<PrestamoDTO> obtenerPrestamoPorID(@PathVariable int id) {
         return ResponseEntity.ok(prestamoService.obtenerParaApi(id));
     }
+
     @Operation(summary = "Registra un préstamo", description = "Comprueba RN-1 a RN-5 y crea el préstamo.")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Préstamo creado"),
@@ -65,7 +66,21 @@ public class PrestamoRestController {
         return ResponseEntity.status(HttpStatus.CREATED).body(prestamo);
     }
 
-
+    @Operation(summary = "Devuelve un préstamo", description = "Calcula la multa y, si se indica, marca la copia como dañada en una transacción.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Préstamo devuelto y actualizado"),
+            @ApiResponse(responseCode = "404", description = "Préstamo inexistente"),
+            @ApiResponse(responseCode = "409", description = "Préstamo ya devuelto")
+    })
+    @PutMapping("/prestamos/{id}/devolucion")
+    public ResponseEntity<PrestamoDTO> devolverPrestamo(@PathVariable int id,
+                                                        @RequestBody(required = false) DevolucionSolicitudDTO solicitud) {
+        boolean copiaDanada = false;
+        if (solicitud != null) {
+            copiaDanada = solicitud.isCopiaDanada();
+        }
+        return ResponseEntity.ok(prestamoService.devolverParaApi(id, copiaDanada));
+    }
 
 
 }

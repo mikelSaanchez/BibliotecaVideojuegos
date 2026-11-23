@@ -275,4 +275,25 @@ public class PrestamoService {
         }
         return obtenerParaApi(idPrestamo);
     }
+
+    public PrestamoDTO devolverParaApi(int idPrestamo, boolean copiaDanada) {
+        PrestamoDTO prestamo = obtenerParaApi(idPrestamo);
+        if (prestamo.getFechaDevolucion() != null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "El préstamo " + idPrestamo + " ya estaba devuelto.");
+        }
+        LocalDate hoy = LocalDate.now();
+        long diasRetraso = ChronoUnit.DAYS.between(prestamo.getFechaLimite(), hoy);
+        if (diasRetraso < 0) {
+            diasRetraso = 0;
+        }
+        BigDecimal multaPorDia = new BigDecimal("0.50");
+        BigDecimal multa = BigDecimal.valueOf(diasRetraso).multiply(multaPorDia);
+        multa = multa.setScale(2, RoundingMode.HALF_UP);
+        if (!prestamoDAO.devolverPrestamo(idPrestamo, prestamo.getIdCopia(), hoy, multa, copiaDanada)) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "No se pudo devolver el préstamo.");
+        }
+        return obtenerParaApi(idPrestamo);
+    }
 }
