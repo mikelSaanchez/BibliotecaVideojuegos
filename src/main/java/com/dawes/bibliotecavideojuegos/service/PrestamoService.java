@@ -224,4 +224,55 @@ public class PrestamoService {
         }
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe el préstamo con id " + id);
     }
+
+    public PrestamoDTO registrarParaApi(Integer idSocio, Integer idCopia) {
+        if (idSocio == null || idCopia == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "idSocio e idCopia son obligatorios.");
+        }
+        SocioDTO socio = prestamoDAO.obtenerSocioPorId(idSocio);
+        if (socio == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe el socio con id " + idSocio);
+        }
+        CopiaDTO copia = prestamoDAO.obtenerCopia(idCopia);
+        if (copia == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe la copia con id " + idCopia);
+        }
+
+        LocalDate hoy = LocalDate.now();
+        if (socio.getAlta() == null || socio.getAlta() != 1) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
+                    "RN-1: El socio " + idSocio + " debe estar activo.");
+        }
+        if (!prestamoDAO.copiaDisponible(idCopia)) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
+                    "RN-2: La copia " + idCopia + " no está disponible.");
+        }
+        if (prestamoDAO.contarPrestamosAbiertos(idSocio) >= 3) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
+                    "RN-3: El socio " + idSocio + " ya tiene 3 préstamos abiertos.");
+        }
+        int edadSocio = Period.between(socio.getFecha_nacimiento(), hoy).getYears();
+        if (edadSocio < copia.getPegi()) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
+                    "RN-4: El socio " + idSocio + " tiene " + edadSocio
+                            + " años y el juego requiere PEGI " + copia.getPegi() + ".");
+        }
+        if (prestamoDAO.tienePrestamoVencido(idSocio, hoy)) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
+                    "RN-5: El socio " + idSocio + " tiene un préstamo vencido sin devolver.");
+        }
+
+        int anioActual = hoy.getYear();
+        int diasPrestamo = 15;
+        if (copia.getAnioLanzamiento() == anioActual
+                || copia.getAnioLanzamiento() == anioActual - 1) {
+            diasPrestamo = 7;
+        }
+        LocalDate fechaLimite = hoy.plusDays(diasPrestamo);
+        int idPrestamo = prestamoDAO.insertarPrestamoApi(idSocio, idCopia, hoy, fechaLimite);
+        if (idPrestamo <= 0) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "No se pudo registrar el préstamo.");
+        }
+        return obtenerParaApi(idPrestamo);
+    }
 }

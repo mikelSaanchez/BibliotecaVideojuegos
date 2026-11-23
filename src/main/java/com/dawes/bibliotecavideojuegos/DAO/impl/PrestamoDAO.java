@@ -77,4 +77,9 @@ public class PrestamoDAO implements IPrestamoDAO {
     public int renovarPrestamo(int idPrestamo, LocalDate nuevaFechaLimite) {
         return prestamoRepository.renovarPrestamo(idPrestamo, nuevaFechaLimite);
     }
+
+    @Override
+    public int insertarPrestamoApi(int idSocio, int idCopia, LocalDate fechaPrestamo, LocalDate fechaLimite) {
+        return prestamoRepository.insertarPrestamoApi(idSocio, idCopia, fechaPrestamo, fechaLimite);
+    }
 }

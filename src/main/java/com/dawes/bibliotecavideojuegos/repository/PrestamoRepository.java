@@ -9,11 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -277,6 +273,25 @@ public class PrestamoRepository {
         }
 
         return filasAfectadas;
+    }
+    public int insertarPrestamoApi(int idSocio, int idCopia, LocalDate fechaPrestamo, LocalDate fechaLimite) {
+        String sql = "INSERT INTO prestamos (id_socio, id_copia, fecha_prestamo, fecha_limite, fecha_devolucion, multa) VALUES (?, ?, ?, ?, NULL, 0)";
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setInt(1, idSocio);
+            ps.setInt(2, idCopia);
+            ps.setDate(3, Date.valueOf(fechaPrestamo));
+            ps.setDate(4, Date.valueOf(fechaLimite));
+            if (ps.executeUpdate() != 1) {
+                return 0;
+            }
+            try (ResultSet keys = ps.getGeneratedKeys()) {
+                return keys.next() ? keys.getInt(1) : 0;
+            }
+        } catch (SQLException e) {
+            logger.error("Error al registrar un préstamo desde la API", e);
+            return 0;
+        }
     }
 
     private PrestamoDTO mapearPrestamo(ResultSet rs) throws SQLException {

@@ -24,4 +24,6 @@ public interface IPrestamoDAO {
     boolean devolverPrestamo(int idPrestamo, int idCopia, LocalDate fechaDevolucion, BigDecimal multa, boolean copiaDanada);
 
     int renovarPrestamo(int idPrestamo, LocalDate nuevaFechaLimite);
+
+    int insertarPrestamoApi(int idSocio, int idCopia, LocalDate fechaPrestamo, LocalDate fechaLimite);
 }
