@@ -6,13 +6,15 @@ import com.dawes.bibliotecavideojuegos.DTO.DesplegableDTO;
 import com.dawes.bibliotecavideojuegos.DTO.PrestamoDTO;
 import com.dawes.bibliotecavideojuegos.DTO.SocioDTO;
 import com.dawes.bibliotecavideojuegos.excepcion.ReglaNegocioExcepcion;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
 @Service
@@ -190,4 +192,27 @@ public class PrestamoService {
             prestamo.setDiasRetraso(0);
         }
     }
+
+    public ArrayList<PrestamoDTO> listarParaApi(String socio, String titulo, String estado, LocalDate fechaDesde) {
+        if (estado != null && !estado.isBlank()
+                && !estado.equals("EN_PLAZO") && !estado.equals("VENCIDO") && !estado.equals("DEVUELTO")) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "El estado debe ser EN_PLAZO, VENCIDO o DEVUELTO.");
+        }
+        ArrayList<PrestamoDTO> prestamos = prestamoDAO.listarPrestamos(socio, titulo, fechaDesde, false);
+        for (PrestamoDTO prestamo : prestamos) {
+            calcularEstado(prestamo, LocalDate.now());
+        }
+        if (estado == null || estado.isBlank()) {
+            return prestamos;
+        }
+        ArrayList<PrestamoDTO> resultado = new ArrayList<>();
+        for (PrestamoDTO prestamo : prestamos) {
+            if (estado.equals(prestamo.getEstadoCalculado())) {
+                resultado.add(prestamo);
+            }
+        }
+        return resultado;
+    }
+
 }
