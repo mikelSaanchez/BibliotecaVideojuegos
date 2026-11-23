@@ -1,15 +1,34 @@
 package com.dawes.bibliotecavideojuegos.DTO;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "Datos de un videojuego de GameVault")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class VideojuegoDTO {
+    @Schema(description = "Identificador del videojuego", example = "3")
     private int id;
+    @Schema(description = "Título", example = "Mario Kart 8 Deluxe")
     private String titulo;
+    @JsonProperty("anioLanzamiento")
+    @Schema(description = "Año de lanzamiento", example = "2017")
     private Integer anio_lanzamiento;
+    @Schema(description = "Clasificación PEGI", example = "3")
     private Integer pegi;
+    @JsonProperty("idDesarrolladora")
+    @Schema(description = "Identificador de la desarrolladora", example = "1")
     private Integer id_desarrolladora;
+    @Schema(description = "Nombre de la desarrolladora", example = "Nintendo")
     private String desarrolladora;
+    @JsonIgnore
     private boolean disponible;
+    @Schema(description = "Número total de copias", example = "2")
     private Integer copiasTotales;
+    @Schema(description = "Número de copias disponibles", example = "1")
     private Integer copiasDisponibles;
+    @JsonIgnore
     private Integer prestamosTotales;
 
     public VideojuegoDTO() {

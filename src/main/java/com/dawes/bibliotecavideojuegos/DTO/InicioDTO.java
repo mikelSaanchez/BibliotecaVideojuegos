@@ -1,5 +1,8 @@
 package com.dawes.bibliotecavideojuegos.DTO;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "Contadores principales de GameVault")
 public class InicioDTO {
     private int videojuegos;
     private int sociosActivos;

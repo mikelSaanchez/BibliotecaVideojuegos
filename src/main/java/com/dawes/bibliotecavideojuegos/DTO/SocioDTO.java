@@ -1,11 +1,18 @@
 package com.dawes.bibliotecavideojuegos.DTO;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.time.LocalDate;
 
+@Schema(description = "Datos de un socio")
 public class SocioDTO {
+    @Schema(description = "Identificador del socio", example = "2")
     private int id;
+    @Schema(description = "Nombre", example = "Marcos")
     private String nombre;
+    @Schema(description = "Apellidos", example = "Gil Prieto")
     private String apellidos;
+    @Schema(description = "Correo electrónico", example = "marcos.gil@mail.test")
     private String email;
     private LocalDate fecha_alta;
     private LocalDate fecha_nacimiento;

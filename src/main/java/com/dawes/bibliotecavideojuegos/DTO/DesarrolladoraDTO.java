@@ -1,9 +1,16 @@
 package com.dawes.bibliotecavideojuegos.DTO;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "Desarrolladora de videojuegos")
 public class DesarrolladoraDTO {
-    private Integer id;
+    @Schema(example = "1")
+    private int id;
+    @Schema(example = "Nintendo")
     private String nombre;
+    @Schema(example = "Japón")
     private String pais;
+
 
     public DesarrolladoraDTO() {
     }

@@ -1,11 +1,17 @@
 package com.dawes.bibliotecavideojuegos.DTO;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+@Schema(description = "Datos de un préstamo de una copia concreta")
 public class PrestamoDTO {
+    @Schema(description = "Identificador del préstamo", example = "17")
     private Integer id;
+    @Schema(description = "Identificador del socio", example = "5")
     private Integer idSocio;
+    @Schema(description = "Identificador de la copia", example = "16")
     private Integer idCopia;
     private LocalDate fechaPrestamo;
     private LocalDate fechaLimite;
